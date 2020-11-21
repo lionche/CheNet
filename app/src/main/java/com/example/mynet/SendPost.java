@@ -3,6 +3,8 @@ package com.example.mynet;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.io.IOException;
 
 import okhttp3.*;
@@ -26,7 +28,7 @@ public class SendPost {
 
 
 
-    public static void LoginPost(){
+    public static void LoginPost() {
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -61,9 +63,18 @@ public class SendPost {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                String responseData = response.body().string();
+                //返回200为登录正确 400为错误
+                char checkLogin = responseData.toString().charAt(14);
+                Log.d(TAG,responseData.toString());
+
+                if (checkLogin == '2')
+//                    Snackbar.make(view, "登录成功啦", Snackbar.LENGTH_LONG)
+//                            .setAction(action_text, click_listener)
+//                            .show();
                 Log.d(TAG,"登录成功啦");
-
-
+                else
+                    Log.d(TAG,"登录失败惹");
 
             }
         });

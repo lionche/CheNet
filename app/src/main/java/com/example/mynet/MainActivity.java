@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 import static com.example.mynet.SendPost.getInfo;
 import static com.example.mynet.SendPost.passwordPost;
 import static com.example.mynet.utils.GetAddress.getIpAddress;
@@ -41,13 +43,11 @@ public class MainActivity extends AppCompatActivity {
                 String name = et_name.getText().toString();
                 String password = et_password.getText().toString();
 
-                Log.d("testhttp",name+" "+password);
-                getInfo(name,password,ipadr,macadr);
+                Log.d("testhttp", name + " " + password);
+                getInfo(name, password, ipadr, macadr);
                 SendPost.LoginPost();
             }
         });
-
-
     }
 
 }
