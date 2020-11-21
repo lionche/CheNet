@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MyNet</string>
+    <string name="tv_title">网络登录</string>
+    <string name="user_name">请输入学号:</string>
+    <string name="password">请输入密码:</string>
+    <string name="name_hint">输入学号咯</string>
+    <string name="password_hint">输入密码咯</string>
+    <string name="login_title">登录叭</string>
+</resources>
