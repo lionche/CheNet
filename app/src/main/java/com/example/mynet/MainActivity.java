@@ -1,6 +1,7 @@
 package com.example.mynet;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText et_password;
     private EditText et_name;
     private Button bt_login;
+    static CoordinatorLayout coordinator;
+
 
 
     @Override
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         et_name = findViewById(R.id.et_name);
         et_password = findViewById(R.id.et_password);
         bt_login = findViewById(R.id.bt_login);
+        coordinator = findViewById(R.id.coordinator);
 
         String ipadr = getIpAddress(this);
         String macadr = getMacAddressFromIp(this);

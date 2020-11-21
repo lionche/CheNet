@@ -1,16 +1,13 @@
 package com.example.mynet;
 
-import android.content.Context;
 import android.util.Log;
-
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 
 import okhttp3.*;
 
-import static com.example.mynet.utils.GetAddress.getIpAddress;
-import static com.example.mynet.utils.GetAddress.getMacAddressFromIp;
+import static com.example.mynet.MainActivity.coordinator;
 
 public class SendPost {
     static String TAG = "testhttp";
@@ -18,6 +15,7 @@ public class SendPost {
     static String passwordPost = null;
     static String ipPost = null;
     static String macPost = null;
+
 
     public static void getInfo(String name,String password,String ip ,String mac){
         namePost = name;
@@ -68,12 +66,17 @@ public class SendPost {
                 char checkLogin = responseData.toString().charAt(14);
                 Log.d(TAG,responseData.toString());
 
-                if (checkLogin == '2')
-//                    Snackbar.make(view, "登录成功啦", Snackbar.LENGTH_LONG)
+                if (checkLogin == '2') {
+                    Snackbar.make(coordinator, "登录成功啦", Snackbar.LENGTH_LONG)
 //                            .setAction(action_text, click_listener)
-//                            .show();
-                Log.d(TAG,"登录成功啦");
+                            .show();
+
+                    Log.d(TAG, "登录成功啦");
+                }
                 else
+                    Snackbar.make(coordinator, "登录失败惹", Snackbar.LENGTH_LONG)
+//                            .setAction(action_text, click_listener)
+                            .show();
                     Log.d(TAG,"登录失败惹");
 
             }
