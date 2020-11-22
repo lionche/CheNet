@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyNet</string>
+    <string name="app_name">小蘑菇</string>
     <string name="tv_title">网络登录</string>
     <string name="user_name">请输入学号:</string>
     <string name="password">请输入密码:</string>

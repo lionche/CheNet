@@ -14,10 +14,13 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.mynet.utils.GetAddress;
 import com.example.mynet.utils.MyThread;
+import com.github.ybq.android.spinkit.sprite.Sprite;
+import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
@@ -42,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mushroom;
 
     PostBean postBean = new PostBean();
+    Sprite doubleBounce = new DoubleBounce();
+
 
 
 
@@ -49,11 +54,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        MyThread myThread = new MyThread ();
+        new MyThread().start();
+
+
+
         SharedPreferences sp = getSharedPreferences("mypassword", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
 
         initView();
         wifiValidate();
+        webValidate();
         getInfo();
 
         Boolean saveifrm = sp.getBoolean("IFRM", false);
@@ -106,16 +118,16 @@ public class MainActivity extends AppCompatActivity {
         cb_rm_password = findViewById(R.id.rm_password);
         cb_au_login = findViewById(R.id.au_login);
         mushroom = findViewById(R.id.mushroom);
+        ProgressBar progressBar = findViewById(R.id.progress);
+        progressBar.setIndeterminateDrawable(doubleBounce);
+
+
     }
 
 
     private void getInfo() {
         postBean.setIpadr(getIpAddress(this));
         postBean.setMacadr(getMacAddressFromIp(this));
-
-        MyThread myThread = new MyThread ();
-        new MyThread().start();
-        webValidate();
 
     }
 
@@ -171,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean webValidate() {
         if (WebValidate) {
-            Snackbar.make(coordinator, "等待江江的创意", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(coordinator, "你已经连网啦，还来看人家，爱你哟", Snackbar.LENGTH_LONG).show();
         }
         return WebValidate;
     }

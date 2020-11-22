@@ -24,7 +24,7 @@ import static com.blankj.utilcode.util.ThreadUtils.runOnUiThread;
 
 public class GetAddress {
 
-    public static boolean isAvailableByPing(String ip) {
+    public static boolean isAvailableByPing1(String ip) {
         if (ip == null || ip.length() <= 0) {
             ip = "223.5.5.5";// 阿里巴巴公共ip
         }
