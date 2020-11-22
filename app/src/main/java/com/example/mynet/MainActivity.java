@@ -16,11 +16,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.mynet.utils.GetAddress;
+import com.example.mynet.utils.MyThread;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.io.IOException;
 
+import static com.blankj.utilcode.util.NetworkUtils.isAvailableByPing;
 import static com.example.mynet.SendPost.passwordPost;
 import static com.example.mynet.utils.GetAddress.getIpAddress;
 import static com.example.mynet.utils.GetAddress.getMacAddressFromIp;
+import static com.example.mynet.utils.GetAddress.getWifiName;
+import static com.example.mynet.utils.GetAddress.isWifiEnabled;
+import static com.example.mynet.utils.MyThread.WebValidate;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,41 +44,28 @@ public class MainActivity extends AppCompatActivity {
     PostBean postBean = new PostBean();
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        et_name = findViewById(R.id.et_name);
-        et_password = findViewById(R.id.et_password);
-        btn_login = findViewById(R.id.btn_login);
-        coordinator = findViewById(R.id.coordinator);
-        cb_rm_password = findViewById(R.id.rm_password);
-        cb_au_login = findViewById(R.id.au_login);
-        mushroom = findViewById(R.id.mushroom);
-
-
         SharedPreferences sp = getSharedPreferences("mypassword", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
 
+        initView();
+        wifiValidate();
         getInfo();
 
         Boolean saveifrm = sp.getBoolean("IFRM", false);
         Boolean saveifau = sp.getBoolean("IFAU", false);
         String savename = sp.getString("NAME", null);
         String savepassword = sp.getString("PASSWORD", null);
-
-
         cb_rm_password.setChecked(saveifrm);
         cb_au_login.setChecked(saveifau);
         et_name.setText(savename);
         et_password.setText(savepassword);
 
-        if (cb_au_login.isChecked()) {
-            postBean.setName(savename);
-            postBean.setPassword(savepassword);
-            SendPost.LoginPost(postBean);
-        }
+        autoLogin(savename, savepassword);
 
 
         cb_au_login.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -86,18 +81,31 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 postBean.setName(et_name.getText().toString());
                 postBean.setPassword(et_password.getText().toString());
+                login(editor);
 
-                SendPost.LoginPost(postBean);
-                spSave(postBean, editor);
+
+
             }
         });
 
         mushroom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onCreate: 我记住的密码为" + savename + " " + savepassword);
+                Snackbar.make(coordinator, "好痛啊，别点我啦！", Snackbar.LENGTH_SHORT).show();
             }
         });
+    }
+
+
+
+    private void initView() {
+        et_name = findViewById(R.id.et_name);
+        et_password = findViewById(R.id.et_password);
+        btn_login = findViewById(R.id.btn_login);
+        coordinator = findViewById(R.id.coordinator);
+        cb_rm_password = findViewById(R.id.rm_password);
+        cb_au_login = findViewById(R.id.au_login);
+        mushroom = findViewById(R.id.mushroom);
     }
 
 
@@ -105,6 +113,9 @@ public class MainActivity extends AppCompatActivity {
         postBean.setIpadr(getIpAddress(this));
         postBean.setMacadr(getMacAddressFromIp(this));
 
+        MyThread myThread = new MyThread ();
+        new MyThread().start();
+        webValidate();
 
     }
 
@@ -130,6 +141,65 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "我不要自动登录");
         }
         editor.apply();
+    }
+
+    private boolean nameValidate() {
+        boolean valid = true;
+
+        String loginname = et_name.getText().toString();
+        String loginpassword = et_password.getText().toString();
+
+        if (loginname.isEmpty() ) {
+            et_name.setError("用户名不能为空");
+            valid = false;
+        } else {
+            et_name.setError(null);
+        }
+
+        return valid;
+    }
+
+    private boolean wifiValidate() {
+        boolean valid = false;
+        if (isWifiEnabled(this)) {
+            valid = true;
+        } else {
+            Snackbar.make(coordinator, "少来消遣我 \n你咋不瞅瞅你连WIFI了没👀", Snackbar.LENGTH_LONG).show();
+        }
+        return valid;
+    }
+
+    private boolean webValidate() {
+        if (WebValidate) {
+            Snackbar.make(coordinator, "等待江江的创意", Snackbar.LENGTH_LONG).show();
+        }
+        return WebValidate;
+    }
+
+
+    private void login(SharedPreferences.Editor editor) {
+        if (!wifiValidate()) {
+            return;
+        }
+        if (webValidate()) {
+            return;
+        }
+
+        if (!nameValidate()) {
+            return;
+        }
+        SendPost.LoginPost(postBean);
+        spSave(postBean, editor);
+    }
+    private void autoLogin(String savename, String savepassword) {
+        if (!wifiValidate()) {
+            return;
+        }
+        if (cb_au_login.isChecked()) {
+            postBean.setName(savename);
+            postBean.setPassword(savepassword);
+            SendPost.LoginPost(postBean);
+        }
     }
 
 }
