@@ -17,16 +17,11 @@ public class SendPost {
     static String macPost = null;
 
 
-    public static void getInfo(String name,String password,String ip ,String mac){
-        namePost = name;
-        passwordPost = password;
-        ipPost =  ip;
-        macPost = mac;
-    }
-
-
-
-    public static void LoginPost() {
+    public static void LoginPost(PostBean postBean) {
+        String namePost = postBean.getName();
+        String passwordPost = postBean.getPassword();
+        String ipPost = postBean.getIpadr();
+        String macPost = postBean.getMacadr();
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -68,16 +63,15 @@ public class SendPost {
 
                 if (checkLogin == '2') {
                     Snackbar.make(coordinator, "登录成功啦", Snackbar.LENGTH_LONG)
-//                            .setAction(action_text, click_listener)
                             .show();
 
                     Log.d(TAG, "登录成功啦");
                 }
-                else
+                else {
                     Snackbar.make(coordinator, "登录失败惹", Snackbar.LENGTH_LONG)
-//                            .setAction(action_text, click_listener)
                             .show();
-                    Log.d(TAG,"登录失败惹");
+                    Log.d(TAG, "123登录失败惹");
+                }
 
             }
         });
