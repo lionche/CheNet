@@ -54,6 +54,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:hint="@string/password_hint"
+                android:nextFocusUp="@string/login_title"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -81,10 +82,10 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_login"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="10dp"
             android:insetLeft="0dp"
             android:insetBottom="0dp"
             android:insetRight="0dp"
@@ -98,10 +99,12 @@
         <com.github.ybq.android.spinkit.SpinKitView
             android:id="@+id/progress"
             style="@style/SpinKitView.Large.Circle"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="0dp"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
             android:layout_gravity="center"
-            android:layout_marginTop="30dp"
+            android:visibility="gone"
             app:SpinKit_Color="@color/mushroom" />
 
     </LinearLayout>

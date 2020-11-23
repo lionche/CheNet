@@ -1,6 +1,8 @@
 package com.example.mynet;
 
 import android.util.Log;
+import android.view.View;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
@@ -64,13 +66,12 @@ public class SendPost {
                 if (checkLogin == '2') {
                     Snackbar.make(coordinator, "登录成功啦", Snackbar.LENGTH_LONG)
                             .show();
-
                     Log.d(TAG, "登录成功啦");
                 }
                 else {
                     Snackbar.make(coordinator, "登录失败惹", Snackbar.LENGTH_LONG)
                             .show();
-                    Log.d(TAG, "123登录失败惹");
+                    Log.d(TAG, "登录失败惹");
                 }
 
             }

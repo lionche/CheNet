@@ -7,8 +7,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -38,15 +41,13 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "testhttp";
     private EditText et_password;
     private EditText et_name;
-    private Button btn_login;
+    Button btn_login;
     static CoordinatorLayout coordinator;
     private CheckBox cb_rm_password;
     private CheckBox cb_au_login;
     private ImageView mushroom;
 
     PostBean postBean = new PostBean();
-    Sprite doubleBounce = new DoubleBounce();
-
 
 
 
@@ -65,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
         initView();
         wifiValidate();
-        webValidate();
         getInfo();
 
         Boolean saveifrm = sp.getBoolean("IFRM", false);
@@ -94,8 +94,11 @@ public class MainActivity extends AppCompatActivity {
                 postBean.setName(et_name.getText().toString());
                 postBean.setPassword(et_password.getText().toString());
                 login(editor);
+                setProgressBar();
 
-
+                InputMethodManager imm = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
             }
         });
@@ -104,9 +107,29 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Snackbar.make(coordinator, "好痛啊，别点我啦！", Snackbar.LENGTH_SHORT).show();
+
+            }
+        });
+
+        mushroom.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Snackbar.make(coordinator, "🚗 ❤ 🍄", Snackbar.LENGTH_SHORT).show();
+                return false;
             }
         });
     }
+
+    private void setProgressBar() {
+        //进度条
+        btn_login.setVisibility(View.GONE);
+        ProgressBar progressBar ;
+        Sprite doubleBounce = new DoubleBounce();
+        progressBar = findViewById(R.id.progress);
+        progressBar.setIndeterminateDrawable(doubleBounce);
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
 
 
 
@@ -118,8 +141,7 @@ public class MainActivity extends AppCompatActivity {
         cb_rm_password = findViewById(R.id.rm_password);
         cb_au_login = findViewById(R.id.au_login);
         mushroom = findViewById(R.id.mushroom);
-        ProgressBar progressBar = findViewById(R.id.progress);
-        progressBar.setIndeterminateDrawable(doubleBounce);
+
 
 
     }
@@ -128,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
     private void getInfo() {
         postBean.setIpadr(getIpAddress(this));
         postBean.setMacadr(getMacAddressFromIp(this));
-
     }
 
     private void spSave(PostBean postBean, SharedPreferences.Editor editor) {
@@ -157,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean nameValidate() {
         boolean valid = true;
-
         String loginname = et_name.getText().toString();
         String loginpassword = et_password.getText().toString();
 
@@ -174,7 +194,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean wifiValidate() {
         boolean valid = false;
         if (isWifiEnabled(this)) {
-            valid = true;
+            if (!webValidate()) {
+                valid = true;
+            }
         } else {
             Snackbar.make(coordinator, "少来消遣我 \n你咋不瞅瞅你连WIFI了没👀", Snackbar.LENGTH_LONG).show();
         }
@@ -193,13 +215,11 @@ public class MainActivity extends AppCompatActivity {
         if (!wifiValidate()) {
             return;
         }
-        if (webValidate()) {
-            return;
-        }
-
         if (!nameValidate()) {
             return;
         }
+
+//        setProgressBar();
         SendPost.LoginPost(postBean);
         spSave(postBean, editor);
     }
@@ -210,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
         if (cb_au_login.isChecked()) {
             postBean.setName(savename);
             postBean.setPassword(savepassword);
+            setProgressBar();
             SendPost.LoginPost(postBean);
         }
     }
