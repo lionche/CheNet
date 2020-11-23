@@ -98,6 +98,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        cb_rm_password.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (!b) cb_au_login.setChecked(false);
+            }
+        });
+
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,7 +132,17 @@ public class MainActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
                     btn_login.setVisibility(View.VISIBLE);
                 }
-                return false;
+                return true;
+            }
+        });
+
+        mushroom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Snackbar.make(coordinator, "点人家干嘛，烦不烦呀", Snackbar.LENGTH_LONG).show();
+                Log.d(TAG, "wifi是否链接: " + WIFIEnable + " 是否有网" + WebValidate);
+
             }
         });
 
@@ -315,10 +332,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void mushroomTouch(View view) {
-        Snackbar.make(coordinator, "点人家干嘛，烦不烦呀", Snackbar.LENGTH_LONG).show();
-        Log.d(TAG, "wifi是否链接: " + WIFIEnable + " 是否有网" + WebValidate);
-
-    }
 
 }
