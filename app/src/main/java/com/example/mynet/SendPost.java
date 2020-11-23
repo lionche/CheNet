@@ -1,5 +1,7 @@
 package com.example.mynet;
 
+import android.net.wifi.aware.DiscoverySession;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
@@ -9,7 +11,7 @@ import java.io.IOException;
 
 import okhttp3.*;
 
-import static com.example.mynet.MainActivity.coordinator;
+import static com.example.mynet.MainActivity.handler;
 
 public class SendPost {
     static String TAG = "testhttp";
@@ -62,17 +64,19 @@ public class SendPost {
                 //返回200为登录正确 400为错误
                 char checkLogin = responseData.toString().charAt(14);
                 Log.d(TAG,responseData.toString());
+                Message message = new Message();
+
 
                 if (checkLogin == '2') {
-                    Snackbar.make(coordinator, "登录成功啦", Snackbar.LENGTH_LONG)
-                            .show();
-                    Log.d(TAG, "登录成功啦");
+
+                    message.obj = true;
                 }
                 else {
-                    Snackbar.make(coordinator, "登录失败惹", Snackbar.LENGTH_LONG)
-                            .show();
-                    Log.d(TAG, "登录失败惹");
+
+                    message.obj = false;
                 }
+                handler.sendMessage(message);
+
 
             }
         });

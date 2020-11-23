@@ -19,6 +19,7 @@
         <ImageView
             android:id="@+id/mushroom"
             android:layout_width="wrap_content"
+            android:onClick="mushroomTouch"
             android:layout_height="72dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"
@@ -111,7 +112,8 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/coordinator"/>
+        android:id="@+id/coordinator"
+        android:background="@color/mushroom_back"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
