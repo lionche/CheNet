@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
         String loginpassword = et_password.getText().toString();
 
         if (loginname.isEmpty()) {
-            et_name.setError("用户名不能为空");
+            et_name.setError("用户名不能为空🤭");
             valid = false;
         } else {
             et_name.setError(null);
@@ -252,10 +252,10 @@ public class MainActivity extends AppCompatActivity {
             if (!WebValidate) {
                 Validate = true;
             } else
-                Snackbar.make(coordinator, "哈哈哈哈哈哈哈哈\n你其实已经登陆咯", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(coordinator, "哈哈哈哈哈哈哈哈\n你其实已经登陆咯😙", Snackbar.LENGTH_LONG).show();
 
         } else {
-            Snackbar.make(coordinator, "少来烦我 \n你咋不瞅瞅你连WIFI了没👀", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(coordinator, "这就来找我了 \n你咋不瞅瞅你连WIFI了没👀", Snackbar.LENGTH_LONG).show();
         }
         return Validate;
     }
@@ -285,7 +285,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }, 1000); // 延时1.5秒
-
         iswebValidate();
     }
 
@@ -301,14 +300,14 @@ public class MainActivity extends AppCompatActivity {
                     btn_login.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
                     if (ifSucc) {
-                        Snackbar.make(coordinator, "登录成功啦", Snackbar.LENGTH_LONG)
+                        Snackbar.make(coordinator, "登录成功啦 😚", Snackbar.LENGTH_LONG)
                                 .show();
                         Log.d(TAG, "登录成功啦");
 
                         Log.d(TAG, "run: 我保存了登陆状态");
 
                     } else {
-                        Snackbar.make(coordinator, "登录失败惹", Snackbar.LENGTH_LONG)
+                        Snackbar.make(coordinator, "登录失败惹 😭", Snackbar.LENGTH_LONG)
                                 .show();
                         Log.d(TAG, "登录失败惹");
                     }
