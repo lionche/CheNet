@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +14,8 @@ import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -20,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.example.mynet.buttonmove.PathTextView;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.google.android.material.snackbar.Snackbar;
@@ -61,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+
+        PathTextView pathTextView = new PathTextView(this);
 
 
         SharedPreferences sp = getSharedPreferences("mypassword", Context.MODE_PRIVATE);
@@ -178,11 +185,35 @@ public class MainActivity extends AppCompatActivity {
 
     private void setProgressBar() {
         //进度条
-        btn_login.setVisibility(View.GONE);
+
         Sprite doubleBounce = new DoubleBounce();
         progressBar = findViewById(R.id.progress);
         progressBar.setIndeterminateDrawable(doubleBounce);
+
+        int shortAnimationDuration = 1300;
+
+        btn_login.setAlpha(0f);
+
+        btn_login.animate()
+                .alpha(0f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+
+//        progressBar.animate()
+//                .alpha(0f)
+//                .setDuration(shortAnimationDuration)
+//                .setListener(new AnimatorListenerAdapter() {
+//                    @Override
+//                    public void onAnimationEnd(Animator animation) {
+//                    }
+//                });
+//        btn_login.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
+
+
+
+//        progressBar.setVisibility(View.VISIBLE);
 
     }
 
@@ -297,8 +328,8 @@ public class MainActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    btn_login.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
+                    btn_login.setVisibility(View.VISIBLE);
                     if (ifSucc) {
                         Snackbar.make(coordinator, "登录成功啦 😚", Snackbar.LENGTH_LONG)
                                 .show();
