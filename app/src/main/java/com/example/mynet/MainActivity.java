@@ -8,14 +8,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -24,7 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.example.mynet.buttonmove.PathTextView;
+import com.githang.statusbar.StatusBarCompat;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.google.android.material.snackbar.Snackbar;
@@ -49,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     boolean WIFIEnable;
     boolean WIFIValidate;
     static boolean ifSucc;
+    static boolean LoginSuccesss;
 
     PostBean postBean = new PostBean();
 
@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRestart();
         Log.d(TAG, "onRestart: 我回来了，再次检测网络");
         WebValidate = false;
+
         IfWIFIValidate();
         IfLogin();
     }
@@ -64,10 +65,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#32F2E1D6"));
+
+
         setContentView(R.layout.activity_main);
         initView();
-
-        PathTextView pathTextView = new PathTextView(this);
 
 
         SharedPreferences sp = getSharedPreferences("mypassword", Context.MODE_PRIVATE);
@@ -126,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         mushroom.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -134,19 +136,22 @@ public class MainActivity extends AppCompatActivity {
                 int action = motionEvent.getAction();
                 if (action == MotionEvent.ACTION_DOWN) {
                     Snackbar.make(coordinator, "恭喜你发现彩蛋啦！ 🚗 ❤ 🍄", Snackbar.LENGTH_SHORT).show();
-                    setProgressBar();
+                    setProgressBar(0,0);
                 } else if (action == MotionEvent.ACTION_UP) {
-                    progressBar.setVisibility(View.GONE);
-                    btn_login.setVisibility(View.VISIBLE);
+                    setLoginBtn();
                 }
                 return true;
             }
         });
 
+
+
+
+
+
         mushroom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Snackbar.make(coordinator, "点人家干嘛，烦不烦呀", Snackbar.LENGTH_LONG).show();
                 Log.d(TAG, "wifi是否链接: " + WIFIEnable + " 是否有网" + WebValidate);
 
@@ -162,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 WIFIValidate = WIFIEnable && !WebValidate;
+                LoginSuccesss = !WIFIValidate;
                 Log.d(TAG, "wifi是否链接: " + WIFIEnable + " 是否有网" + WebValidate + "我可以登陆" + WIFIValidate);
                 wifiValidate();
             }
@@ -183,38 +189,58 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
-    private void setProgressBar() {
+    private void setProgressBar(int in, int out) {
         //进度条
 
-        Sprite doubleBounce = new DoubleBounce();
-        progressBar = findViewById(R.id.progress);
-        progressBar.setIndeterminateDrawable(doubleBounce);
 
-        int shortAnimationDuration = 1300;
+        int shortAnimationDuration = in;
+        int longAnimationDuration = out;
 
-        btn_login.setAlpha(0f);
 
-        btn_login.animate()
-                .alpha(0f)
+        progressBar.setAlpha(0f);
+        progressBar.setVisibility(View.VISIBLE);
+
+        progressBar.animate()
+                .alpha(1f)
                 .setDuration(shortAnimationDuration)
                 .setListener(null);
 
+        btn_login.animate()
+                .alpha(0f)
+                .setDuration(longAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        btn_login.setVisibility(View.GONE);
+                    }
+                });
+    }
 
-//        progressBar.animate()
-//                .alpha(0f)
-//                .setDuration(shortAnimationDuration)
-//                .setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                    }
-//                });
-//        btn_login.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
+    private static void setLoginBtn() {
+        //进度条
 
 
+        int shortAnimationDuration = 1000;
+        int longAnimationDuration = 700;
 
-//        progressBar.setVisibility(View.VISIBLE);
 
+        btn_login.setAlpha(0f);
+        btn_login.setVisibility(View.VISIBLE);
+
+        btn_login.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+        progressBar.animate()
+                .alpha(0f)
+                .setDuration(longAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
     }
 
 
@@ -226,7 +252,9 @@ public class MainActivity extends AppCompatActivity {
         cb_rm_password = findViewById(R.id.rm_password);
         cb_au_login = findViewById(R.id.au_login);
         mushroom = findViewById(R.id.mushroom);
-
+        progressBar = findViewById(R.id.progress);
+        Sprite doubleBounce = new DoubleBounce();
+        progressBar.setIndeterminateDrawable(doubleBounce);
 
     }
 
@@ -282,8 +310,9 @@ public class MainActivity extends AppCompatActivity {
         if (WIFIEnable) {
             if (!WebValidate) {
                 Validate = true;
-            } else
+            } else {
                 Snackbar.make(coordinator, "哈哈哈哈哈哈哈哈\n你其实已经登陆咯😙", Snackbar.LENGTH_LONG).show();
+            }
 
         } else {
             Snackbar.make(coordinator, "这就来找我了 \n你咋不瞅瞅你连WIFI了没👀", Snackbar.LENGTH_LONG).show();
@@ -293,10 +322,16 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void login(SharedPreferences.Editor editor) {
-        Log.d(TAG, "login: 点击登陆");
+        Log.d(TAG, "wifiValidate: " + LoginSuccesss + "别点了，已经登录了");
+
+
         if (!wifiValidate())
             return;
         if (!nameValidate()) {
+            return;
+        }
+        if (LoginSuccesss) {
+            Snackbar.make(coordinator, "人家都帮你登录好啦，别点啦😏", Snackbar.LENGTH_LONG).show();
             return;
         }
 
@@ -306,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
                 SendPost.LoginPost(postBean);
             }
         }.start();
-        setProgressBar();
+        setProgressBar(700, 1000);
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -328,14 +363,12 @@ public class MainActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    progressBar.setVisibility(View.GONE);
-                    btn_login.setVisibility(View.VISIBLE);
+                    setLoginBtn();
                     if (ifSucc) {
                         Snackbar.make(coordinator, "登录成功啦 😚", Snackbar.LENGTH_LONG)
                                 .show();
                         Log.d(TAG, "登录成功啦");
-
-                        Log.d(TAG, "run: 我保存了登陆状态");
+                        LoginSuccesss = true;
 
                     } else {
                         Snackbar.make(coordinator, "登录失败惹 😭", Snackbar.LENGTH_LONG)
@@ -358,9 +391,8 @@ public class MainActivity extends AppCompatActivity {
                 SendPost.LoginPost(postBean);
             }
         }.start();
-        setProgressBar();
+        setProgressBar(700, 1000);
     }
-
 
 
 }

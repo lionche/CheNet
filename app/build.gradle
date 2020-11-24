@@ -41,6 +41,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
     implementation 'com.blankj:utilcodex:1.30.5'
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+    implementation 'com.githang:status-bar-compat:0.7'
+
 
 
 
