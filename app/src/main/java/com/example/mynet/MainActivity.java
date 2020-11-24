@@ -1,5 +1,6 @@
 package com.example.mynet;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -9,6 +10,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,6 +24,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.githang.statusbar.StatusBarCompat;
 import com.github.ybq.android.spinkit.sprite.Sprite;
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText et_name;
     private EditText et_password;
     static Button btn_login;
+    static Button btn_success;
+    static Button btn_fail;
     static CoordinatorLayout coordinator;
     private CheckBox cb_rm_password;
     private CheckBox cb_au_login;
@@ -48,24 +53,49 @@ public class MainActivity extends AppCompatActivity {
     boolean WIFIEnable;
     boolean WIFIValidate;
     static boolean ifSucc;
-    static boolean LoginSuccesss;
+    static boolean login_succ;
 
     PostBean postBean = new PostBean();
 
     @Override
-    protected void onRestart() {
+    protected void onRestart(){
         super.onRestart();
         Log.d(TAG, "onRestart: 我回来了，再次检测网络");
+
         WebValidate = false;
+
+        new Thread() {
+            @Override
+            public void run() {
+                button2load();
+            }
+        }.start();
+
 
         IfWIFIValidate();
         IfLogin();
+        aulogin(cb_au_login.isChecked(), et_name.getText().toString(), et_password.getText().toString());
+    }
+
+
+
+    private void button2load() {
+        if (btn_fail.getVisibility() == View.VISIBLE) {
+            fail2load();
+        }
+        if (btn_success.getVisibility() == View.VISIBLE) {
+            succ2load();
+        }
+        if (btn_login.getVisibility() == View.VISIBLE) {
+            login2load();
+
+
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#32F2E1D6"));
 
 
@@ -87,33 +117,12 @@ public class MainActivity extends AppCompatActivity {
         et_password.setText(savepassword);
 
         IfWIFIValidate();
-
         IfLogin();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                if (saveifau && WIFIValidate) {
-                    autoLogin(savename, savepassword);
-                }
-            }
-        }, 100); // 延时1.5秒
+        aulogin(saveifau, savename, savepassword);
 
 
-        cb_au_login.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) cb_rm_password.setChecked(true);
-            }
-        });
-
-        cb_rm_password.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (!b) cb_au_login.setChecked(false);
-            }
-        });
+        LogicCheckBox();
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 postBean.setName(et_name.getText().toString());
                 postBean.setPassword(et_password.getText().toString());
                 login(editor);
+                login2load();
 
                 InputMethodManager imm = (InputMethodManager)
                         getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -136,17 +146,13 @@ public class MainActivity extends AppCompatActivity {
                 int action = motionEvent.getAction();
                 if (action == MotionEvent.ACTION_DOWN) {
                     Snackbar.make(coordinator, "恭喜你发现彩蛋啦！ 🚗 ❤ 🍄", Snackbar.LENGTH_SHORT).show();
-                    setProgressBar(0,0);
+                    login2load();
                 } else if (action == MotionEvent.ACTION_UP) {
-                    setLoginBtn();
+                   load2succ(); ;
                 }
                 return true;
             }
         });
-
-
-
-
 
 
         mushroom.setOnClickListener(new View.OnClickListener() {
@@ -158,7 +164,54 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btn_success.setOnClickListener(new View.OnClickListener(){
 
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(coordinator, "人家都帮你登录好啦，别点啦😏", Snackbar.LENGTH_LONG).show();
+            }
+        });
+
+        btn_fail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fail2load();
+                postBean.setName(et_name.getText().toString());
+                postBean.setPassword(et_password.getText().toString());
+                fail2login(editor);
+            }
+        });
+
+    }
+
+    private void LogicCheckBox() {
+        cb_au_login.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) cb_rm_password.setChecked(true);
+            }
+        });
+
+        cb_rm_password.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (!b) cb_au_login.setChecked(false);
+            }
+        });
+    }
+
+    private void aulogin(Boolean saveifau, String savename, String savepassword) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (saveifau && WIFIValidate) {
+//                    Log.d(TAG, "aulogin: 我在自动登录"+WIFIValidate);
+
+                    autoLogin(savename, savepassword);
+                }
+            }
+        }, 500); // 延时1.5秒
     }
 
 
@@ -167,11 +220,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 WIFIValidate = WIFIEnable && !WebValidate;
-                LoginSuccesss = !WIFIValidate;
                 Log.d(TAG, "wifi是否链接: " + WIFIEnable + " 是否有网" + WebValidate + "我可以登陆" + WIFIValidate);
                 wifiValidate();
             }
-        }, 100); // 延时1.5秒
+        }, 700); // 延时1.5秒
     }
 
     private void IfWIFIValidate() {
@@ -189,39 +241,59 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
-    private void setProgressBar(int in, int out) {
+
+    static int shortAnimationDuration = 200;
+    static int longAnimationDuration = 200;
+
+
+    static private void load2succ() {
         //进度条
 
+        btn_success.setAlpha(0f);
+        btn_success.setVisibility(View.VISIBLE);
 
-        int shortAnimationDuration = in;
-        int longAnimationDuration = out;
-
-
-        progressBar.setAlpha(0f);
-        progressBar.setVisibility(View.VISIBLE);
-
-        progressBar.animate()
+        btn_success.animate()
                 .alpha(1f)
                 .setDuration(shortAnimationDuration)
                 .setListener(null);
 
-        btn_login.animate()
+        progressBar.animate()
                 .alpha(0f)
                 .setDuration(longAnimationDuration)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        btn_login.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
     }
 
-    private static void setLoginBtn() {
+    static private void load2fail() {
         //进度条
 
 
-        int shortAnimationDuration = 1000;
-        int longAnimationDuration = 700;
+
+        btn_fail.setAlpha(0f);
+        btn_fail.setVisibility(View.VISIBLE);
+
+        btn_fail.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+        progressBar.animate()
+                .alpha(0f)
+                .setDuration(longAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private void load2login() {
+        //进度条
 
 
         btn_login.setAlpha(0f);
@@ -243,11 +315,89 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    private void succ2load() {
+        //进度条
+
+
+        progressBar.setAlpha(0f);
+        progressBar.setVisibility(View.VISIBLE);
+
+        progressBar.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+        btn_success.animate()
+                .alpha(0f)
+                .setDuration(longAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        btn_success.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private void fail2load() {
+        //进度条
+
+
+        progressBar.setAlpha(0f);
+        progressBar.setVisibility(View.VISIBLE);
+
+        progressBar.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+        btn_fail.animate()
+                .alpha(0f)
+                .setDuration(longAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        btn_fail.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+
+    private void login2load() {
+        Log.d(TAG, "login2load: 登录到加载");
+        //登录到加载
+        //进度条
+
+
+
+        progressBar.setAlpha(0f);
+        progressBar.setVisibility(View.VISIBLE);
+
+        progressBar.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+        btn_login.animate()
+                .alpha(0f)
+                .setDuration(longAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        btn_login.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+
+
+
 
     private void initView() {
         et_name = findViewById(R.id.et_name);
         et_password = findViewById(R.id.et_password);
         btn_login = findViewById(R.id.btn_login);
+        btn_success = findViewById(R.id.btn_success);
+        btn_fail = findViewById(R.id.btn_fail);
         coordinator = findViewById(R.id.coordinator);
         cb_rm_password = findViewById(R.id.rm_password);
         cb_au_login = findViewById(R.id.au_login);
@@ -255,7 +405,6 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress);
         Sprite doubleBounce = new DoubleBounce();
         progressBar.setIndeterminateDrawable(doubleBounce);
-
     }
 
 
@@ -310,8 +459,12 @@ public class MainActivity extends AppCompatActivity {
         if (WIFIEnable) {
             if (!WebValidate) {
                 Validate = true;
+                load2login();
+                Snackbar.make(coordinator, "让我帮你登录叭😃", Snackbar.LENGTH_LONG).show();
+                Log.d(TAG, "wifiValidate: 显示登录按钮");
             } else {
                 Snackbar.make(coordinator, "哈哈哈哈哈哈哈哈\n你其实已经登陆咯😙", Snackbar.LENGTH_LONG).show();
+                load2succ();
             }
 
         } else {
@@ -322,18 +475,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void login(SharedPreferences.Editor editor) {
-        Log.d(TAG, "wifiValidate: " + LoginSuccesss + "别点了，已经登录了");
-
-
         if (!wifiValidate())
             return;
         if (!nameValidate()) {
             return;
-        }
-        if (LoginSuccesss) {
-            Snackbar.make(coordinator, "人家都帮你登录好啦，别点啦😏", Snackbar.LENGTH_LONG).show();
-            return;
-        }
+                }
 
         new Thread() {
             @Override
@@ -341,7 +487,6 @@ public class MainActivity extends AppCompatActivity {
                 SendPost.LoginPost(postBean);
             }
         }.start();
-        setProgressBar(700, 1000);
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -351,7 +496,28 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }, 1000); // 延时1.5秒
-        iswebValidate();
+
+    }
+
+    private void fail2login(SharedPreferences.Editor editor) {
+        if (!nameValidate()) {
+            return;
+        }
+        new Thread() {
+            @Override
+            public void run() {
+                SendPost.LoginPost(postBean);
+            }
+        }.start();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (ifSucc) {
+                    spSave(postBean, editor);
+                }
+            }
+        }, 1000); // 延时1.5秒
+
     }
 
     static public Handler handler = new Handler() {
@@ -363,20 +529,24 @@ public class MainActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    setLoginBtn();
+
                     if (ifSucc) {
+                        //按键转成功
+                        load2succ();
                         Snackbar.make(coordinator, "登录成功啦 😚", Snackbar.LENGTH_LONG)
                                 .show();
                         Log.d(TAG, "登录成功啦");
-                        LoginSuccesss = true;
+
 
                     } else {
+                        //按键转失败
+                        load2fail();
                         Snackbar.make(coordinator, "登录失败惹 😭", Snackbar.LENGTH_LONG)
                                 .show();
                         Log.d(TAG, "登录失败惹");
                     }
                 }
-            }, 1500); // 延时1.5秒
+            }, 1000); // 延时1.5秒
 
         }
     };
@@ -391,8 +561,10 @@ public class MainActivity extends AppCompatActivity {
                 SendPost.LoginPost(postBean);
             }
         }.start();
-        setProgressBar(700, 1000);
+        login2load();
     }
+
+
 
 
 }
