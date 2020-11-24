@@ -64,15 +64,10 @@ public class MainActivity extends AppCompatActivity {
 
         WebValidate = false;
 
-        new Thread() {
-            @Override
-            public void run() {
-                button2load();
-            }
-        }.start();
-
+        button2load();
 
         IfWIFIValidate();
+
         IfLogin();
         aulogin(cb_au_login.isChecked(), et_name.getText().toString(), et_password.getText().toString());
     }
@@ -101,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         initView();
+
 
 
         SharedPreferences sp = getSharedPreferences("mypassword", Context.MODE_PRIVATE);
@@ -201,13 +197,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void aulogin(Boolean saveifau, String savename, String savepassword) {
+        Log.d(TAG, "aulogin: 我判断是否自动登陆"+(saveifau && WIFIValidate));
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
                 if (saveifau && WIFIValidate) {
-//                    Log.d(TAG, "aulogin: 我在自动登录"+WIFIValidate);
-
+                    Log.d(TAG, "aulogin: 我在自动登录");
                     autoLogin(savename, savepassword);
                 }
             }
@@ -223,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "wifi是否链接: " + WIFIEnable + " 是否有网" + WebValidate + "我可以登陆" + WIFIValidate);
                 wifiValidate();
             }
-        }, 700); // 延时1.5秒
+        }, 500); // 延时1.5秒
     }
 
     private void IfWIFIValidate() {
@@ -409,7 +404,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void getInfo() {
-        postBean.setIpadr(getIpAddress(this));
+        postBean.setIpadr("10.21.175.51");
+
+//        postBean.setIpadr(getIpAddress(this));
         postBean.setMacadr(getMacAddressFromIp(this));
 
     }
@@ -461,14 +458,16 @@ public class MainActivity extends AppCompatActivity {
                 Validate = true;
                 load2login();
                 Snackbar.make(coordinator, "让我帮你登录叭😃", Snackbar.LENGTH_LONG).show();
-                Log.d(TAG, "wifiValidate: 显示登录按钮");
+                Log.d(TAG, "wifiValidate: 连wifi但没有网");
             } else {
                 Snackbar.make(coordinator, "哈哈哈哈哈哈哈哈\n你其实已经登陆咯😙", Snackbar.LENGTH_LONG).show();
+                Log.d(TAG, "wifiValidate: 连wifi有网");
                 load2succ();
             }
 
         } else {
             Snackbar.make(coordinator, "这就来找我了 \n你咋不瞅瞅你连WIFI了没👀", Snackbar.LENGTH_LONG).show();
+            Log.d(TAG, "wifiValidate: 没连wifi");
         }
         return Validate;
     }
@@ -491,11 +490,14 @@ public class MainActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "run: ifSucc=="+ifSucc);
                 if (ifSucc) {
                     spSave(postBean, editor);
+                    Log.d(TAG, "我要记住密码");
+
                 }
             }
-        }, 1000); // 延时1.5秒
+        }, 2000); // 延时1.5秒
 
     }
 
