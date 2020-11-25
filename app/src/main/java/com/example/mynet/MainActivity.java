@@ -1,6 +1,5 @@
 package com.example.mynet;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -10,7 +9,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,7 +22,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.example.mynet.callback.LoginCallBackListener;
 import com.githang.statusbar.StatusBarCompat;
@@ -32,10 +29,12 @@ import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.google.android.material.snackbar.Snackbar;
 
+import static com.blankj.utilcode.util.DeviceUtils.getMacAddress;
+import static com.blankj.utilcode.util.NetworkUtils.getIpAddressByWifi;
+import static com.blankj.utilcode.util.NetworkUtils.getWifiEnabled;
 import static com.blankj.utilcode.util.NetworkUtils.isAvailableByPing;
-import static com.example.mynet.utils.GetAddress.getIpAddress;
-import static com.example.mynet.utils.GetAddress.getMacAddressFromIp;
-import static com.example.mynet.utils.GetAddress.isWifiEnabled;
+import static com.blankj.utilcode.util.NetworkUtils.isWifiConnected;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     static Button btn_login;
     static Button btn_success;
     static Button btn_fail;
-    static CoordinatorLayout coordinator;
+    public static CoordinatorLayout coordinator;
     private CheckBox cb_rm_password;
     private CheckBox cb_au_login;
     private ImageView mushroom;
@@ -89,20 +88,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#32F2E1D6"));
-
-
         setContentView(R.layout.activity_main);
         initView();
 
-
         SharedPreferences sp = getSharedPreferences("mypassword", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-
-
         Boolean saveifrm = sp.getBoolean("IFRM", false);
         Boolean saveifau = sp.getBoolean("IFAU", false);
         String savename = sp.getString("NAME", null);
@@ -197,15 +195,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        loginCallBackListener = new LoginCallBackListener();
+        loginCallBack();
 
+
+    }
+
+    private void loginCallBack() {
+        loginCallBackListener = new LoginCallBackListener();
         loginCallBackListener.setmListener(new LoginCallBackListener.Listener() {
 
             @Override
             public void loginSuccess() {
                 Log.d(TAG, "sendMessage: 我在用接口回调发送登陆成功");
                 Message message = Message.obtain();
-                message.obj = true;
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("loginCallBack",true);
+                message.setData(bundle);
                 handler.sendMessage(message);
             }
 
@@ -213,13 +218,13 @@ public class MainActivity extends AppCompatActivity {
             public void loginFail() {
                 Log.d(TAG, "sendMessage: 我在用接口回调发送登陆失败");
                 Message message = Message.obtain();
-                message.obj = false;
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("loginCallBack",false);
+                message.setData(bundle);
                 handler.sendMessage(message);
             }
 
         });
-
-
     }
 
     private void aulogin(Boolean saveifau, String savename, String savepassword) {
@@ -249,8 +254,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void IfWIFIValidate() {
         iswebValidate();
-        WIFIEnable = isWifiEnabled(getApplicationContext());
-        getInfo();
+//        WIFIEnable = getWifiEnabled();
+        WIFIEnable = isWifiConnected();
+
+        getNetInfo();
     }
 
     private void iswebValidate() {
@@ -421,14 +428,13 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress);
         Sprite doubleBounce = new DoubleBounce();
         progressBar.setIndeterminateDrawable(doubleBounce);
+
     }
 
 
-    private void getInfo() {
-
-        postBean.setIpadr(getIpAddress(this));
-        postBean.setMacadr(getMacAddressFromIp(this));
-
+    private void getNetInfo() {
+        postBean.setMacadr(getMacAddress());
+        postBean.setIpadr(getIpAddressByWifi());
     }
 
 
@@ -562,7 +568,9 @@ public class MainActivity extends AppCompatActivity {
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message message) {
-            ifSucc = (boolean) message.obj;
+            Bundle bundle = message.getData();
+            ifSucc = bundle.getBoolean("loginCallBack");
+//            ifSucc = (boolean) message.obj;
 
             new Handler().postDelayed(new Runnable() {
                 @Override
