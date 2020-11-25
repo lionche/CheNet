@@ -7,7 +7,7 @@ public class WIFICallBackListener {
     public interface Listener{
 
         //SnackBar给提示
-        void ShowTips(Snackbar snackbar);
+        void SendWIFIMessage(int caseid);
         void toLogin();
 
     }
@@ -19,9 +19,9 @@ public class WIFICallBackListener {
     //WIFI关闭
     //WIFI打开，但没连WIFI
     //WIFI打开，连接WIFI，但已经登录
-    public void WifiShowTips(Snackbar snackbar){
+    public void WifiSendMessage(int caseid){
         if (mListener != null){
-            mListener.ShowTips(snackbar);
+            mListener.SendWIFIMessage(caseid);
         }
     }
 

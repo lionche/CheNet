@@ -56,8 +56,7 @@ public class MainActivity extends AppCompatActivity {
     boolean WebValidate;
     boolean WIFIEnable;
     boolean WIFIValidate;
-    static boolean ifSucc;
-    static boolean login_succ;
+    static boolean ifLoginSucc;
     public static LoginCallBackListener loginCallBackListener;
 
 //    PostBean postBean = new PostBean();
@@ -91,9 +90,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
-
-
 
 
     @Override
@@ -207,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "sendMessage: 我在用接口回调发送登陆成功");
                 Message message = Message.obtain();
                 Bundle bundle = new Bundle();
-                bundle.putBoolean("loginCallBack",true);
+                bundle.putBoolean("loginCallBack", true);
                 message.setData(bundle);
                 handler.sendMessage(message);
             }
@@ -217,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "sendMessage: 我在用接口回调发送登陆失败");
                 Message message = Message.obtain();
                 Bundle bundle = new Bundle();
-                bundle.putBoolean("loginCallBack",false);
+                bundle.putBoolean("loginCallBack", false);
                 message.setData(bundle);
                 handler.sendMessage(message);
             }
@@ -236,8 +232,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 500); // 延时1.5秒
     }
-
-
 
 
     private void iswebValidate() {
@@ -299,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void load2login() {
+    static private void load2login() {
         //进度条
 
 
@@ -322,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void succ2load() {
+    static private void succ2load() {
         //进度条
 
 
@@ -345,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void fail2load() {
+    static private void fail2load() {
         //进度条
 
 
@@ -369,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void login2load() {
+    static private void login2load() {
         Log.d(TAG, "login2load: 登录到加载");
         //登录到加载
         //进度条
@@ -490,8 +484,8 @@ public class MainActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "run: ifSucc==" + ifSucc);
-                if (ifSucc) {
+                Log.d(TAG, "run: ifSucc==" + ifLoginSucc);
+                if (ifLoginSucc) {
                     spSave(postBean, editor);
                     Log.d(TAG, "我要记住密码");
                 }
@@ -513,7 +507,7 @@ public class MainActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (ifSucc) {
+                if (ifLoginSucc) {
                     spSave(postBean, editor);
                 }
             }
@@ -535,18 +529,51 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    Handler handler = new Handler(new Handler.Callback() {
+    static Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message message) {
             Bundle bundle = message.getData();
-            ifSucc = bundle.getBoolean("loginCallBack");
-//            ifSucc = (boolean) message.obj;
+            ifLoginSucc = bundle.getBoolean("loginCallBack");
+            int ifWIFIValidate = bundle.getInt("WIFICallBack");
+            Log.d(TAG, "handleMessage: WIFI CASE "+ifWIFIValidate);
 
+            Log.d(TAG, "handleMessage: ifLoginSucc"+ifLoginSucc);
+            loginMessageHandler();
+            WIFIMessageHandler(ifWIFIValidate);
+            return false;
+        }
+
+        private void WIFIMessageHandler(int ifWIFIValidate) {
+            switch (ifWIFIValidate) {
+                case 1:
+                    Log.d(TAG, "checkWIFIValidate: WIFI都没打开哥");
+                    Snackbar.make(coordinator, "WIFI都没打开哥😓 ", Snackbar.LENGTH_LONG).show();
+                    load2fail();
+                    break;
+                case 2:
+                    Log.d(TAG, "checkWIFIValidate: 这就来找我了 你咋不瞅瞅你连WIFI了没");
+                    Snackbar.make(coordinator, "这就来找我了 \n你咋不瞅瞅你连WIFI了没👀", Snackbar.LENGTH_LONG).show();
+                    load2fail();
+                    break;
+                case 3:
+                    Log.d(TAG, "checkWIFIValidate: 哈哈哈哈哈哈哈哈你其实已经登陆咯");
+                    Snackbar.make(coordinator, "哈哈哈哈哈哈哈哈,\n你其实已经登陆咯😙", Snackbar.LENGTH_LONG).show();
+                    load2succ();
+                    break;
+                case 4:
+                    Log.d(TAG, "checkWIFIValidate: 让我帮你登录叭");
+                    Snackbar.make(coordinator, "让我帮你登录叭😃", Snackbar.LENGTH_LONG).show();
+                    load2login();
+                    break;
+            }
+        }
+
+        private void loginMessageHandler() {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (ifSucc) {
-//                            按键转成功
+                    if (ifLoginSucc) {
+                        //                            按键转成功
                         load2succ();
                         Snackbar.make(coordinator, "登录成功啦 😚", Snackbar.LENGTH_LONG).show();
                         Log.d(TAG, "登录成功啦");
@@ -560,7 +587,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }, 1000); // 延时1.5秒
-            return false;
         }
     });
 
