@@ -207,7 +207,6 @@ public class MainActivity extends AppCompatActivity {
                 Message message = Message.obtain();
                 message.obj = true;
                 handler.sendMessage(message);
-
             }
 
             @Override
@@ -217,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
                 message.obj = false;
                 handler.sendMessage(message);
             }
-
 
         });
 
