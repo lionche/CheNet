@@ -200,13 +200,25 @@ public class MainActivity extends AppCompatActivity {
         loginCallBackListener = new LoginCallBackListener();
 
         loginCallBackListener.setmListener(new LoginCallBackListener.Listener() {
+
             @Override
-            public void sendMessage() {
-                Log.d(TAG, "sendMessage: 我在用接口回调");
-                Message message = new Message();
+            public void loginSuccess() {
+                Log.d(TAG, "sendMessage: 我在用接口回调发送登陆成功");
+                Message message = Message.obtain();
                 message.obj = true;
                 handler.sendMessage(message);
+
             }
+
+            @Override
+            public void loginFail() {
+                Log.d(TAG, "sendMessage: 我在用接口回调发送登陆失败");
+                Message message = Message.obtain();
+                message.obj = false;
+                handler.sendMessage(message);
+            }
+
+
         });
 
 
@@ -535,35 +547,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    public Handler handler = new Handler() {
-//        @Override
-//        public void handleMessage(@NonNull Message msg) {
-//            super.handleMessage(msg);
-//            ifSucc = (boolean) msg.obj;
-//
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//
-//                    if (ifSucc) {
-//                        //按键转成功
-////                        load2succ();
-////                        Snackbar.make(coordinator, "登录成功啦 😚", Snackbar.LENGTH_LONG).show();
-////                        Log.d(TAG, "登录成功啦");
-//
-//                    } else {
-//                        //按键转失败
-//                        load2fail();
-//                        Snackbar.make(coordinator, "登录失败惹 😭", Snackbar.LENGTH_LONG)
-//                                .show();
-//                        Log.d(TAG, "登录失败惹");
-//                    }
-//                }
-//            }, 1000); // 延时1.5秒
-//
-//        }
-//    };
-
 
     private void autoLogin(String savename, String savepassword) {
         postBean.setName(savename);
@@ -578,7 +561,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public Handler handler = new Handler(new Handler.Callback() {
+    Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message message) {
             ifSucc = (boolean) message.obj;
@@ -586,7 +569,6 @@ public class MainActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-
                     if (ifSucc) {
 //                            按键转成功
                         load2succ();

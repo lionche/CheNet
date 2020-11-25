@@ -68,20 +68,14 @@ public class SendPost {
                 char checkLogin = responseData.toString().charAt(14);
                 Log.d(TAG,responseData.toString());
 
-
-
                 if (checkLogin == '2') {
 
-                    loginCallBackListener.getMessage();
-
-
-
+                    loginCallBackListener.sentSuccessMessage();
                 }
                 else {
-
+                    loginCallBackListener.sentFailMessage();
 
                 }
-//                handler.sendMessage(message);
 
 
             }

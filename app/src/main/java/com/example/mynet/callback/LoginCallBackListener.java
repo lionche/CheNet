@@ -4,18 +4,25 @@ public class LoginCallBackListener {
     private Listener mListener;
 
     public interface Listener{
-        void sendMessage();
+        void loginSuccess();
+        void loginFail();
+
     }
 
     public void setmListener(Listener mListener) {
         this.mListener = mListener;
     }
 
-    public void getMessage(){
+    public void sentSuccessMessage(){
         if (mListener != null){
-            mListener.sendMessage();
+            mListener.loginSuccess();
         }
     }
 
+    public void sentFailMessage(){
+        if (mListener != null){
+            mListener.loginFail();
+        }
+    }
 
 }
