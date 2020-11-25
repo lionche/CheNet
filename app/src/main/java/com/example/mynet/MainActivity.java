@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.mynet.callback.LoginCallBackListener;
 import com.githang.statusbar.StatusBarCompat;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
@@ -54,11 +55,12 @@ public class MainActivity extends AppCompatActivity {
     boolean WIFIValidate;
     static boolean ifSucc;
     static boolean login_succ;
+    public static LoginCallBackListener loginCallBackListener;
 
     PostBean postBean = new PostBean();
 
     @Override
-    protected void onRestart(){
+    protected void onRestart() {
         super.onRestart();
         Log.d(TAG, "onRestart: 我回来了，再次检测网络");
 
@@ -71,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
         IfLogin();
         aulogin(cb_au_login.isChecked(), et_name.getText().toString(), et_password.getText().toString());
     }
-
 
 
     private void button2load() {
@@ -96,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         initView();
-
 
 
         SharedPreferences sp = getSharedPreferences("mypassword", Context.MODE_PRIVATE);
@@ -144,7 +144,8 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(coordinator, "恭喜你发现彩蛋啦！ 🚗 ❤ 🍄", Snackbar.LENGTH_SHORT).show();
                     login2load();
                 } else if (action == MotionEvent.ACTION_UP) {
-                   load2succ(); ;
+                    load2succ();
+                    ;
                 }
                 return true;
             }
@@ -160,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btn_success.setOnClickListener(new View.OnClickListener(){
+        btn_success.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -194,10 +195,25 @@ public class MainActivity extends AppCompatActivity {
                 if (!b) cb_au_login.setChecked(false);
             }
         });
+
+
+        loginCallBackListener = new LoginCallBackListener();
+
+        loginCallBackListener.setmListener(new LoginCallBackListener.Listener() {
+            @Override
+            public void sendMessage() {
+                Log.d(TAG, "sendMessage: 我在用接口回调");
+                Message message = new Message();
+                message.obj = true;
+                handler.sendMessage(message);
+            }
+        });
+
+
     }
 
     private void aulogin(Boolean saveifau, String savename, String savepassword) {
-        Log.d(TAG, "aulogin: 我判断是否自动登陆"+(saveifau && WIFIValidate));
+        Log.d(TAG, "aulogin: 我判断是否自动登陆" + (saveifau && WIFIValidate));
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -241,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
     static int longAnimationDuration = 200;
 
 
-    static private void load2succ() {
+    static public void load2succ() {
         //进度条
 
         btn_success.setAlpha(0f);
@@ -265,7 +281,6 @@ public class MainActivity extends AppCompatActivity {
 
     static private void load2fail() {
         //进度条
-
 
 
         btn_fail.setAlpha(0f);
@@ -363,7 +378,6 @@ public class MainActivity extends AppCompatActivity {
         //进度条
 
 
-
         progressBar.setAlpha(0f);
         progressBar.setVisibility(View.VISIBLE);
 
@@ -384,9 +398,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
     private void initView() {
         et_name = findViewById(R.id.et_name);
         et_password = findViewById(R.id.et_password);
@@ -404,9 +415,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void getInfo() {
-        postBean.setIpadr("10.21.175.51");
 
-//        postBean.setIpadr(getIpAddress(this));
+        postBean.setIpadr(getIpAddress(this));
         postBean.setMacadr(getMacAddressFromIp(this));
 
     }
@@ -478,19 +488,22 @@ public class MainActivity extends AppCompatActivity {
             return;
         if (!nameValidate()) {
             return;
-                }
+        }
 
-        new Thread() {
-            @Override
-            public void run() {
-                SendPost.LoginPost(postBean);
-            }
-        }.start();
+        SendPost.LoginPost(postBean);
+
+
+//        new Thread() {
+//            @Override
+//            public void run() {
+//                SendPost.LoginPost(postBean);
+//            }
+//        }.start();
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "run: ifSucc=="+ifSucc);
+                Log.d(TAG, "run: ifSucc==" + ifSucc);
                 if (ifSucc) {
                     spSave(postBean, editor);
                     Log.d(TAG, "我要记住密码");
@@ -522,36 +535,34 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    static public Handler handler = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            ifSucc = (boolean) msg.obj;
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                    if (ifSucc) {
-                        //按键转成功
-                        load2succ();
-                        Snackbar.make(coordinator, "登录成功啦 😚", Snackbar.LENGTH_LONG)
-                                .show();
-                        Log.d(TAG, "登录成功啦");
-
-
-                    } else {
-                        //按键转失败
-                        load2fail();
-                        Snackbar.make(coordinator, "登录失败惹 😭", Snackbar.LENGTH_LONG)
-                                .show();
-                        Log.d(TAG, "登录失败惹");
-                    }
-                }
-            }, 1000); // 延时1.5秒
-
-        }
-    };
+//    public Handler handler = new Handler() {
+//        @Override
+//        public void handleMessage(@NonNull Message msg) {
+//            super.handleMessage(msg);
+//            ifSucc = (boolean) msg.obj;
+//
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                    if (ifSucc) {
+//                        //按键转成功
+////                        load2succ();
+////                        Snackbar.make(coordinator, "登录成功啦 😚", Snackbar.LENGTH_LONG).show();
+////                        Log.d(TAG, "登录成功啦");
+//
+//                    } else {
+//                        //按键转失败
+//                        load2fail();
+//                        Snackbar.make(coordinator, "登录失败惹 😭", Snackbar.LENGTH_LONG)
+//                                .show();
+//                        Log.d(TAG, "登录失败惹");
+//                    }
+//                }
+//            }, 1000); // 延时1.5秒
+//
+//        }
+//    };
 
 
     private void autoLogin(String savename, String savepassword) {
@@ -567,6 +578,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message message) {
+            ifSucc = (boolean) message.obj;
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (ifSucc) {
+//                            按键转成功
+                        load2succ();
+                        Snackbar.make(coordinator, "登录成功啦 😚", Snackbar.LENGTH_LONG).show();
+                        Log.d(TAG, "登录成功啦");
+
+                    } else {
+                        //按键转失败
+                        load2fail();
+                        Snackbar.make(coordinator, "登录失败惹 😭", Snackbar.LENGTH_LONG)
+                                .show();
+                        Log.d(TAG, "登录失败惹");
+                    }
+                }
+            }, 1000); // 延时1.5秒
+            return false;
+        }
+    });
 
 
 }

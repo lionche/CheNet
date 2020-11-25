@@ -5,13 +5,16 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
+import com.example.mynet.callback.LoginCallBackListener;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 
 import okhttp3.*;
 
-import static com.example.mynet.MainActivity.handler;
+import static com.example.mynet.MainActivity.coordinator;
+import static com.example.mynet.MainActivity.load2succ;
+import static com.example.mynet.MainActivity.loginCallBackListener;
 
 public class SendPost {
     static String TAG = "testhttp";
@@ -64,18 +67,21 @@ public class SendPost {
                 //返回200为登录正确 400为错误
                 char checkLogin = responseData.toString().charAt(14);
                 Log.d(TAG,responseData.toString());
-                Message message = new Message();
+
 
 
                 if (checkLogin == '2') {
 
-                    message.obj = true;
+                    loginCallBackListener.getMessage();
+
+
+
                 }
                 else {
 
-                    message.obj = false;
+
                 }
-                handler.sendMessage(message);
+//                handler.sendMessage(message);
 
 
             }
