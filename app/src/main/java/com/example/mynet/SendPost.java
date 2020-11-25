@@ -18,11 +18,6 @@ import static com.example.mynet.MainActivity.loginCallBackListener;
 
 public class SendPost {
     static String TAG = "testhttp";
-    static String namePost = null;
-    static String passwordPost = null;
-    static String ipPost = null;
-    static String macPost = null;
-
 
     public static void LoginPost(PostBean postBean) {
         String namePost = postBean.getName();
