@@ -1,5 +1,6 @@
 package com.example.mynet;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
@@ -8,12 +9,15 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Color;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,6 +35,7 @@ import com.githang.statusbar.StatusBarCompat;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.google.android.material.snackbar.Snackbar;
+
 import static com.blankj.utilcode.util.NetworkUtils.isAvailableByPing;
 import static com.example.mynet.LoginClass.getPostBean;
 import static com.example.mynet.LoginClass.login;
@@ -57,38 +62,17 @@ public class MainActivity extends AppCompatActivity {
     static WIFICallBackListener wifiCallBackListener;
 
 
-
     @Override
     protected void onRestart() {
         super.onRestart();
         Log.d(TAG, "onRestart: 我回来了，再次检测网络");
 
-        WebValidate = false;
-
-        button2load();
-
+        view2view(btn_success, progressBar);
         NewThreadCheckWIFI();
-
-//        aulogin(cb_au_login.isChecked(), et_name.getText().toString(), et_password.getText().toString());
     }
 
-
-    private void button2load() {
-        if (btn_fail.getVisibility() == View.VISIBLE) {
-            fail2load();
-        }
-        if (btn_success.getVisibility() == View.VISIBLE) {
-            succ2load();
-        }
-        if (btn_login.getVisibility() == View.VISIBLE) {
-            login2load();
-
-        }
-    }
 
     static Boolean saveifau;
-    static Boolean IfRemPassword;
-
 
 
     @Override
@@ -107,23 +91,14 @@ public class MainActivity extends AppCompatActivity {
 
         LoginCallBack(editor);
 
-        NewThreadCheckWIFI();
-
-
-        LogicCheckBox();
+        //检测wifi状况，顺便检测是否自动登陆
+        checkWIFIValidate();
 
 
         cb_rm_password.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (cb_rm_password.isChecked()) {
-                    editor.putBoolean("IFRM", true);
-                    Log.d(TAG, "我要记住密码");
-                } else {
-                    editor.putBoolean("IFRM", false);
-                    Log.d(TAG, "我不要记住密码");
-                }
-                editor.apply();
+                if (!b) cb_au_login.setChecked(false);
             }
         });
 
@@ -132,12 +107,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (cb_au_login.isChecked()) {
-                    editor.putBoolean("IFAU", true);
+                    cb_rm_password.setChecked(true);
                     Log.d(TAG, "我要自动登录");
                 } else {
-                    editor.putBoolean("IFAU", false);
                     Log.d(TAG, "我不要自动登录");
                 }
+                editor.putBoolean("IFAU", cb_au_login.isChecked());
                 editor.apply();
             }
         });
@@ -145,28 +120,43 @@ public class MainActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LegalToLogin(editor);
-                login2load();
-
+                LegalToLogin();
             }
         });
 
-//        mushroom.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//
-//                int action = motionEvent.getAction();
-//                if (action == MotionEvent.ACTION_DOWN) {
-//                    Snackbar.make(coordinator, "恭喜你发现彩蛋啦！ 🚗 ❤ 🍄", Snackbar.LENGTH_SHORT).show();
-//                    login2load();
-//                } else if (action == MotionEvent.ACTION_UP) {
-//                    load2succ();
-//                    ;
-//                }
-//                return true;
-//            }
-//        });
 
+        mushroom.setOnTouchListener(new View.OnTouchListener() {
+            View view2;
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                int action = motionEvent.getAction();
+                if (action == MotionEvent.ACTION_DOWN) {
+                    view2 = getButtonVisiable();
+                    Log.d(TAG, "onTouch:  我按的是" + view2);
+                    if ((view2 != progressBar) && (view2 != null)) {
+                        Snackbar.make(coordinator, "恭喜你发现彩蛋啦！ 🚗 ❤ 🍄", Snackbar.LENGTH_SHORT).show();
+                        view2view(view2, progressBar);
+                    } else {
+                        if (view2 == progressBar) {
+                            Log.d(TAG, "onTouch: 我按的是加载");
+                        }
+                    }
+                } else if (action == MotionEvent.ACTION_UP) {
+                    Log.d(TAG, "onTouch:  我抬起是" + view2);
+                    if ((view2 != progressBar) && (view2 != null)) {
+                        view2view(progressBar, view2);
+                    }
+                    if (view2 == progressBar) {
+                        Log.d(TAG, "onTouch: 我按的是加载");
+                    }
+                    if (view2 == null) {
+                        Snackbar.make(coordinator, "严重bug,不会解决了，请重启\n其实这才是真的彩蛋😬", Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+                return true;
+            }
+        });
 
 
         btn_success.setOnClickListener(new View.OnClickListener() {
@@ -188,6 +178,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private View getButtonVisiable() {
+        View view = null;
+        if (btn_success.getVisibility() == View.VISIBLE)
+            view = btn_success;
+        if (btn_login.getVisibility() == View.VISIBLE)
+            view = btn_login;
+        if (btn_fail.getVisibility() == View.VISIBLE)
+            view = btn_fail;
+        if (progressBar.getVisibility() == View.VISIBLE)
+            view = progressBar;
+        return view;
+    }
+
     private void getSpSetSitting(SharedPreferences sp) {
         Boolean saveifrm = sp.getBoolean("IFRM", false);
         saveifau = sp.getBoolean("IFAU", false);
@@ -199,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
         et_password.setText(savepassword);
     }
 
-    private void NewThreadCheckWIFI() {
+    private static void NewThreadCheckWIFI() {
         new Thread() {
             @Override
             public void run() {
@@ -208,23 +211,6 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
-    private void LogicCheckBox() {
-        cb_au_login.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) cb_rm_password.setChecked(true);
-            }
-        });
-
-        cb_rm_password.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (!b) cb_au_login.setChecked(false);
-            }
-        });
-
-
-    }
 
     private void WIFICallBack() {
         Log.d(TAG, "WIFICallBack: 我在等网络状况的消息的回调");
@@ -239,15 +225,24 @@ public class MainActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putInt("WIFICallBack", caseid);
                 bundle.putString("TYPE", "WIFICallBack");
-
-                bundle.putBoolean("AutoLogin", MainActivity.saveifau);
                 message.setData(bundle);
                 handler.sendMessage(message);
             }
+
             @Override
             public void toLogin() {
                 //获取WiFi和MAC
                 getPostBean();
+
+                if (cb_au_login.isChecked()) {
+                    Log.d(TAG, "toLogin: 发送消息给HANDLER自动登陆");
+                    Message message = Message.obtain();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("ButtonCallBack", "AutoLogin");
+                    bundle.putString("TYPE", "ButtonCallBack");
+                    message.setData(bundle);
+                    handler.sendMessage(message);
+                }
 
             }
         });
@@ -267,8 +262,20 @@ public class MainActivity extends AppCompatActivity {
                 message.setData(bundle);
                 handler.sendMessage(message);
 
-                if(cb_rm_password.isChecked() && b)
-                    RemPassword(editor);
+                if (b) {
+                    if (cb_rm_password.isChecked()) {
+                        RemPassword(editor);
+                    }
+                    if (!cb_rm_password.isChecked()) {
+                        ForgetPassword(editor);
+                    } else if (cb_au_login.isChecked()) {
+                    }
+                } else {
+                    editor.putBoolean("IFAU", false);
+                    editor.putString("NAME", postBean.getName());
+                }
+                editor.apply();
+
             }
         });
     }
@@ -279,7 +286,15 @@ public class MainActivity extends AppCompatActivity {
         String password = postBean.getPassword();
         editor.putString("NAME", name);
         editor.putString("PASSWORD", password);
+        editor.putBoolean("IFRM", true);
         Log.d(TAG, "我要记住密码 " + name + " " + password);
+        editor.apply();
+    }
+
+    private void ForgetPassword(SharedPreferences.Editor editor) {
+        editor.putString("PASSWORD", null);
+        editor.putBoolean("IFRM", false);
+        Log.d(TAG, "我要不记住密码 ");
         editor.apply();
     }
 
@@ -298,7 +313,29 @@ public class MainActivity extends AppCompatActivity {
     static int longAnimationDuration = 200;
 
 
-    static public void load2succ() {
+    public void view2view(View view1, View view2) {
+        //进度条
+
+        view2.setAlpha(0f);
+        view2.setVisibility(View.VISIBLE);
+
+        view2.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+        view1.animate()
+                .alpha(0f)
+                .setDuration(longAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        view1.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    public void load2succ() {
         //进度条
 
         btn_success.setAlpha(0f);
@@ -320,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    static private void load2fail() {
+    private void load2fail() {
         //进度条
 
 
@@ -343,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    static private void load2login() {
+    private void load2login() {
         //进度条
 
 
@@ -366,10 +403,8 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    static private void succ2load() {
+    private void succ2load() {
         //进度条
-
-
         progressBar.setAlpha(0f);
         progressBar.setVisibility(View.VISIBLE);
 
@@ -389,7 +424,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    static private void fail2load() {
+    private void fail2load() {
         //进度条
 
 
@@ -413,7 +448,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    static private void login2load() {
+    private void login2load() {
         Log.d(TAG, "login2load: 登录到加载");
         //登录到加载
         //进度条
@@ -457,7 +492,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     public boolean nameValidate() {
         boolean valid = true;
         String loginname = et_name.getText().toString();
@@ -471,36 +505,16 @@ public class MainActivity extends AppCompatActivity {
         return valid;
     }
 
-    private boolean wifiValidate() {
-        Boolean Validate = false;
-        if (WIFIEnable) {
-            if (!WebValidate) {
-                Validate = true;
-                load2login();
-                Snackbar.make(coordinator, "让我帮你登录叭😃", Snackbar.LENGTH_LONG).show();
-                Log.d(TAG, "wifiValidate: 连wifi但没有网");
-            } else {
-                Snackbar.make(coordinator, "哈哈哈哈哈哈哈哈\n你其实已经登陆咯😙", Snackbar.LENGTH_LONG).show();
-                Log.d(TAG, "wifiValidate: 连wifi有网");
-                load2succ();
-            }
 
-        } else {
-            Snackbar.make(coordinator, "这就来找我了 \n你咋不瞅瞅你连WIFI了没👀", Snackbar.LENGTH_LONG).show();
-            Log.d(TAG, "wifiValidate: 没连wifi");
-        }
-        return Validate;
-    }
-
-
-    private void LegalToLogin(SharedPreferences.Editor editor) {
+    private void LegalToLogin() {
         if (!nameValidate()) {
             return;
         }
         postBean.setName(et_name.getText().toString());
         postBean.setPassword(et_password.getText().toString());
         login();
-            }
+        login2load();
+    }
 
     private void fail2login(SharedPreferences.Editor editor) {
         if (!nameValidate()) {
@@ -529,21 +543,33 @@ public class MainActivity extends AppCompatActivity {
             Bundle bundle = message.getData();
             String type = bundle.getString("TYPE");
 
-
             switch (type) {
                 case "LoginCallBack":
                     Boolean ifLoginSucc = bundle.getBoolean("LoginCallBack");
-                    Log.d(TAG, "handleMessage: ifLoginSucc" + ifLoginSucc);
                     loginMessageHandler(ifLoginSucc);
                     break;
                 case "WIFICallBack":
                     int ifWIFIValidate = bundle.getInt("WIFICallBack");
 
-                    WIFIMessageHandler(ifWIFIValidate);
-                    Log.d(TAG, "handleMessage: 我收到消息，在自动登录嘛？ "+bundle.getBoolean("AutoLogin"));
-                    if(bundle.getBoolean("AutoLogin"))
-                        btn_login.performClick();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            WIFIMessageHandler(ifWIFIValidate);
+                        }
+                    }, 800); // 延时1.5秒
                     break;
+                case "ButtonCallBack":
+                    String ButtonChange = bundle.getString("ButtonCallBack");
+                    switch (ButtonChange) {
+                        case "AutoLogin":
+                            //自动登陆
+                            Log.d(TAG, "handleMessage: 我收到消息要自动登陆");
+                            Snackbar.make(coordinator, "偷偷帮你自动登陆啦！ 🤫 ", Snackbar.LENGTH_LONG).show();
+                            postBean.setName(et_name.getText().toString());
+                            postBean.setPassword(et_password.getText().toString());
+                            login();
+                            break;
+                    }
             }
             return false;
         }
@@ -552,23 +578,46 @@ public class MainActivity extends AppCompatActivity {
             switch (ifWIFIValidate) {
                 case 1:
                     Log.d(TAG, "checkWIFIValidate: WIFI都没打开哥");
-                    Snackbar.make(coordinator, "WIFI都没打开哥😓 ", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(coordinator, "WIFI都没打开哥 😨", Snackbar.LENGTH_LONG)
+                            .setAction("开启WIFI", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                }
+                            })
+                            .show();
                     load2fail();
                     break;
                 case 2:
                     Log.d(TAG, "checkWIFIValidate: 这就来找我了 你咋不瞅瞅你连WIFI了没");
-                    Snackbar.make(coordinator, "这就来找我了 \n你咋不瞅瞅你连WIFI了没👀", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(coordinator, "这就来找我了 \n你咋不瞅瞅你连WIFI了没👀", Snackbar.LENGTH_LONG)
+                            .setAction("选择网络", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                }
+                            })
+                            .show();
                     load2fail();
                     break;
                 case 3:
                     Log.d(TAG, "checkWIFIValidate: 哈哈哈哈哈哈哈哈你其实已经登陆咯");
-                    Snackbar.make(coordinator, "哈哈哈哈哈哈哈哈,\n你其实已经登陆咯😙", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(coordinator, "哈哈哈哈哈哈哈哈,\n你其实已经登陆咯😙", Snackbar.LENGTH_LONG)
+                            .setAction("选择网络", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                }
+                            })
+                            .show();
                     load2succ();
                     break;
                 case 4:
-                    Log.d(TAG, "checkWIFIValidate: 让我帮你登录叭");
-                    Snackbar.make(coordinator, "让我帮你登录叭😃", Snackbar.LENGTH_LONG).show();
-                    load2login();
+                    if (!saveifau) {
+                        load2login();
+                        Log.d(TAG, "checkWIFIValidate: 让我帮你登录叭");
+                        Snackbar.make(coordinator, "让我帮你登录叭😃", Snackbar.LENGTH_LONG).show();
+                    }
                     break;
             }
         }
@@ -580,7 +629,14 @@ public class MainActivity extends AppCompatActivity {
                     if (ifLoginSucc) {
                         // 按键转成功
                         load2succ();
-                        Snackbar.make(coordinator, "登录成功啦 😚", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(coordinator, "登录成功啦 😚", Snackbar.LENGTH_LONG)
+                                .setAction("爱我一下", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Snackbar.make(coordinator, "我也爱你!", Snackbar.LENGTH_LONG).show();
+                                    }
+                                })
+                                .show();
                         Log.d(TAG, "登录成功啦");
 
                     } else {
@@ -594,8 +650,6 @@ public class MainActivity extends AppCompatActivity {
             }, 300); // 延时1.5秒
         }
     });
-
-
 
 
 }

@@ -13,7 +13,6 @@ import java.io.IOException;
 import okhttp3.*;
 
 import static com.example.mynet.MainActivity.coordinator;
-import static com.example.mynet.MainActivity.load2succ;
 import static com.example.mynet.MainActivity.loginCallBackListener;
 
 public class SendPost {
