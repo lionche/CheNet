@@ -10,14 +10,12 @@ public class LoginClass {
     private EditText et_password;
     public static PostBean postBean;
 
-    private static void getInfo(){
+
+    public static void getPostBean(){
         postBean = new PostBean();
         postBean.setMacadr(getMacAddress());
         postBean.setIpadr(getIpAddressByWifi());
-    }
 
-    public static void getPostBean(){
-        getInfo();
 
     }
     public static void login(){

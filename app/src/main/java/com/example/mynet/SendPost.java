@@ -65,10 +65,10 @@ public class SendPost {
 
                 if (checkLogin == '2') {
 
-                    loginCallBackListener.sentSuccessMessage();
+                    loginCallBackListener.LoginSendMessage(true);
                 }
                 else {
-                    loginCallBackListener.sentFailMessage();
+                    loginCallBackListener.LoginSendMessage(false);
 
                 }
 

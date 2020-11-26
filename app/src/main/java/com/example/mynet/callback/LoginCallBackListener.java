@@ -4,8 +4,8 @@ public class LoginCallBackListener {
     private Listener mListener;
 
     public interface Listener{
-        void loginSuccess();
-        void loginFail();
+
+        void SendLoginMessage(Boolean b);
 
     }
 
@@ -13,16 +13,11 @@ public class LoginCallBackListener {
         this.mListener = mListener;
     }
 
-    public void sentSuccessMessage(){
+    public void LoginSendMessage(Boolean b){
         if (mListener != null){
-            mListener.loginSuccess();
+            mListener.SendLoginMessage(b);
         }
     }
 
-    public void sentFailMessage(){
-        if (mListener != null){
-            mListener.loginFail();
-        }
-    }
 
 }
