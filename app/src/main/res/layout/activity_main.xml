@@ -52,10 +52,23 @@
 
     <ImageView
         android:id="@+id/mushroom"
-        android:layout_width="wrap_content"
-        android:layout_height="72dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/mushroom"
+        android:src="@drawable/mushroomlogo"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline2"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/mushroomsad"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        android:src="@drawable/mushroomsad"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -159,27 +172,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_success"
-        android:visibility="gone"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_gravity="center"
-        android:backgroundTint="@color/mushroom"
-        android:insetLeft="0dp"
-        android:insetTop="0dp"
-        android:insetRight="0dp"
-        android:insetBottom="0dp"
-        android:padding="0dp"
-        app:cornerRadius="100dp"
-        app:icon="@drawable/ic_baseline_check_24"
-        app:iconGravity="textStart"
-        app:iconPadding="0dp"
-        app:iconSize="35dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline7"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_fail"
@@ -195,6 +187,28 @@
         android:padding="0dp"
         app:cornerRadius="100dp"
         app:icon="@drawable/ic_baseline_refresh_24"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="35dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline7" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_wifi"
+        android:visibility="gone"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/mushroom"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp"
+        android:padding="0dp"
+        app:cornerRadius="100dp"
+        app:icon="@drawable/ic_baseline_wifi_24"
         app:iconGravity="textStart"
         app:iconPadding="0dp"
         app:iconSize="35dp"
@@ -231,6 +245,20 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.9" />
+    
+    <com.github.chengang.library.TickView
+        android:id="@+id/btn_success"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:check_base_color="@color/mushroom"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline7"
+        app:rate="normal" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
