@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.blankj.utilcode.util.KeyboardUtils;
 import com.example.mynet.callback.LoginCallBackListener;
 import com.example.mynet.callback.WIFICallBackListener;
 import com.githang.statusbar.StatusBarCompat;
@@ -37,6 +38,7 @@ import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.google.android.material.snackbar.Snackbar;
 
+import static com.blankj.utilcode.util.KeyboardUtils.clickBlankArea2HideSoftInput;
 import static com.blankj.utilcode.util.NetworkUtils.isAvailableByPing;
 import static com.example.mynet.LoginClass.getPostBean;
 import static com.example.mynet.LoginClass.login;
@@ -97,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         checkWIFIValidate();
 
 
+
         cb_rm_password.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -110,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
             }
         });
+
+
 
 
         cb_au_login.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -205,6 +210,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
+
 
     private View getButtonVisiable() {
         View view = null;
