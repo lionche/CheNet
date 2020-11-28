@@ -5,7 +5,7 @@ public class LoginCallBackListener {
 
     public interface Listener{
 
-        void SendLoginMessage(Boolean b);
+        void SendLoginMessage(Boolean b,char c);
 
     }
 
@@ -13,9 +13,9 @@ public class LoginCallBackListener {
         this.mListener = mListener;
     }
 
-    public void LoginSendMessage(Boolean b){
+    public void LoginSendMessage(Boolean b,char c){
         if (mListener != null){
-            mListener.SendLoginMessage(b);
+            mListener.SendLoginMessage(b,c);
         }
     }
 

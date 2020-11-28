@@ -244,7 +244,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.9" />
-    
+
     <com.github.chengang.library.TickView
         android:id="@+id/btn_success"
         android:visibility="gone"

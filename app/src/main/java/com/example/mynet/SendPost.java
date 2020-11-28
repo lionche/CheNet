@@ -9,6 +9,7 @@ import com.example.mynet.callback.LoginCallBackListener;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.*;
 
@@ -25,12 +26,13 @@ public class SendPost {
         String macPost = postBean.getMacadr();
 
         OkHttpClient client = new OkHttpClient().newBuilder()
+                .readTimeout(5, TimeUnit.SECONDS)
                 .build();
         MediaType mediaType = MediaType.parse("application/json");
 //        RequestBody body = RequestBody.create(mediaType, "{\"deviceType\":\"PC\",\"webAuthUser\":\"202032908\",\"webAuthPassword\":\"09005X\",\"redirectUrl\":\"http://10.16.0.12:8081/?usermac=4C-6F-9C-02-E2-C5&userip=10.21.91.241&origurl=http://edge.microsoft.com/captiveportal/generate_204&nasip=10.100.0.1\",\"type\":\"login\"}");
 
-        RequestBody body = RequestBody.create(mediaType, "{\"deviceType\":\"Android\",\"webAuthUser\":\"" + namePost +"\",\"webAuthPassword\":\""+ passwordPost+"\",\"redirectUrl\":\"http://10.16.0.12:8081/?usermac=" + macPost + "&userip="+ ipPost +"&origurl=http://edge.microsoft.com/captiveportal/generate_204&nasip=10.100.0.1\",\"type\":\"login\"}");
-        Log.d(TAG,"{\"deviceType\":\"Android\",\"webAuthUser\":\"" + namePost +"\",\"webAuthPassword\":\""+ passwordPost+"\",\"redirectUrl\":\"http://10.16.0.12:8081/?usermac=" + macPost + "&userip="+ ipPost +"&origurl=http://edge.microsoft.com/captiveportal/generate_204&nasip=10.100.0.1\",\"type\":\"login\"}");
+        RequestBody body = RequestBody.create(mediaType, "{\"deviceType\":\"Android\",\"webAuthUser\":\"" + namePost + "\",\"webAuthPassword\":\"" + passwordPost + "\",\"redirectUrl\":\"http://10.16.0.12:8081/?usermac=" + macPost + "&userip=" + ipPost + "&origurl=http://edge.microsoft.com/captiveportal/generate_204&nasip=10.100.0.1\",\"type\":\"login\"}");
+        Log.d(TAG, "{\"deviceType\":\"Android\",\"webAuthUser\":\"" + namePost + "\",\"webAuthPassword\":\"" + passwordPost + "\",\"redirectUrl\":\"http://10.16.0.12:8081/?usermac=" + macPost + "&userip=" + ipPost + "&origurl=http://edge.microsoft.com/captiveportal/generate_204&nasip=10.100.0.1\",\"type\":\"login\"}");
         Request request = new Request.Builder()
                 .url("http://10.16.0.12:8081/portal/api/v2/online?noCache=1605885991204")
                 .method("POST", body)
@@ -52,7 +54,7 @@ public class SendPost {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.d(TAG,e.getMessage());
+                Log.d(TAG, e.getMessage());
             }
 
             @Override
@@ -60,14 +62,14 @@ public class SendPost {
                 String responseData = response.body().string();
                 //返回200为登录正确 400为错误
                 char checkLogin = responseData.toString().charAt(14);
-                Log.d(TAG,responseData.toString());
+                char checkwrong = responseData.toString().charAt(90);
+                Log.d(TAG, responseData.toString());
 
                 if (checkLogin == '2') {
 
-                    loginCallBackListener.LoginSendMessage(true);
-                }
-                else {
-                    loginCallBackListener.LoginSendMessage(false);
+                    loginCallBackListener.LoginSendMessage(true, 's');
+                } else {
+                    loginCallBackListener.LoginSendMessage(false, checkwrong);
 
                 }
 

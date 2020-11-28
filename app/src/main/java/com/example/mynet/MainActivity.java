@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.blankj.utilcode.util.KeyboardUtils;
+import com.blankj.utilcode.util.SnackbarUtils;
 import com.example.mynet.callback.LoginCallBackListener;
 import com.example.mynet.callback.WIFICallBackListener;
 import com.githang.statusbar.StatusBarCompat;
@@ -99,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
         checkWIFIValidate();
 
 
-
         cb_rm_password.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -113,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
             }
         });
-
-
 
 
         cb_au_login.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -212,8 +210,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     private View getButtonVisiable() {
         View view = null;
         if (btn_success.getVisibility() == View.VISIBLE)
@@ -292,9 +288,10 @@ public class MainActivity extends AppCompatActivity {
         loginCallBackListener = new LoginCallBackListener();
         loginCallBackListener.setmListener(new LoginCallBackListener.Listener() {
             @Override
-            public void SendLoginMessage(Boolean b) {
+            public void SendLoginMessage(Boolean b,char c) {
                 Message message = Message.obtain();
                 Bundle bundle = new Bundle();
+                bundle.putChar("WrongeMessage",c);
                 bundle.putBoolean("LoginCallBack", b);
                 bundle.putString("TYPE", "LoginCallBack");
                 message.setData(bundle);
@@ -399,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void setMushroomFace(View view1,View view2) {
+    public void setMushroomFace(View view1, View view2) {
 
         //进度条
 
@@ -581,7 +578,7 @@ public class MainActivity extends AppCompatActivity {
         postBean.setName(et_name.getText().toString());
         postBean.setPassword(et_password.getText().toString());
         login();
-        view2view(btn_login,progressBar);
+        view2view(btn_login, progressBar);
     }
 
     private void fail2login(SharedPreferences.Editor editor) {
@@ -613,8 +610,9 @@ public class MainActivity extends AppCompatActivity {
 
             switch (type) {
                 case "LoginCallBack":
+                    char wrongmessage = bundle.getChar("WrongeMessage");
                     Boolean ifLoginSucc = bundle.getBoolean("LoginCallBack");
-                    loginMessageHandler(ifLoginSucc);
+                    loginMessageHandler(ifLoginSucc,wrongmessage);
                     break;
                 case "WIFICallBack":
                     int ifWIFIValidate = bundle.getInt("WIFICallBack");
@@ -646,16 +644,22 @@ public class MainActivity extends AppCompatActivity {
             switch (ifWIFIValidate) {
                 case 1:
                     Log.d(TAG, "checkWIFIValidate: WIFI都没打开哥");
-                    Snackbar.make(coordinator, "WIFI都没打开哥 😨", Snackbar.LENGTH_LONG)
+                    SnackbarUtils.with(coordinator)
+                            .setMessage("测试")
+                            .setMessageColor(Color.BLACK)
+                            .setBgResource(R.color.mushroom)
+                            .show();
+
+/*                    Snackbar.make(coordinator, "WIFI都没打开哥 😨", Snackbar.LENGTH_LONG)
                             .setAction("开启WIFI", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                                 }
                             })
-                            .show();
-                    view2view(progressBar,btn_wifi);
-                    setMushroomFace(mushroom,mushroomsad);
+                            .show();*/
+                    view2view(progressBar, btn_wifi);
+                    setMushroomFace(mushroom, mushroomsad);
 
 
                     break;
@@ -669,8 +673,8 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             })
                             .show();
-                    setMushroomFace(mushroom,mushroomsad);
-                    view2view(progressBar,btn_wifi);
+                    setMushroomFace(mushroom, mushroomsad);
+                    view2view(progressBar, btn_wifi);
                     break;
                 case 3:
                     Log.d(TAG, "checkWIFIValidate: 哈哈哈哈哈哈哈哈你其实已经登陆咯");
@@ -682,14 +686,14 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             })
                             .show();
-                    setMushroomFace(mushroomsad,mushroom);
+                    setMushroomFace(mushroomsad, mushroom);
                     load2succ();
 
                     break;
                 case 4:
                     if (!saveifau) {
                         load2login();
-                        setMushroomFace(mushroom,mushroomsad);
+                        setMushroomFace(mushroom, mushroomsad);
 //                        view2view(mushroom,mushroomsad);
                         Log.d(TAG, "checkWIFIValidate: 让我帮你登录叭");
                         Snackbar.make(coordinator, "让我帮你登录叭😃", Snackbar.LENGTH_LONG).show();
@@ -698,14 +702,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        private void loginMessageHandler(Boolean ifLoginSucc) {
+        private void loginMessageHandler(Boolean ifLoginSucc,char wrongmessage) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     if (ifLoginSucc) {
                         // 按键转成功
                         load2succ();
-                        setMushroomFace(mushroomsad,mushroom);
+                        setMushroomFace(mushroomsad, mushroom);
 
                         Snackbar.make(coordinator, "登录成功啦 😚", Snackbar.LENGTH_LONG)
                                 .setAction("爱我一下", new View.OnClickListener() {
@@ -725,21 +729,37 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "登录成功啦");
 
                     } else {
-                        //按键转失败
-                        view2view(progressBar,btn_fail);
-                        setMushroomFace(mushroom,mushroomsad);
+                        view2view(progressBar, btn_fail);
+                        setMushroomFace(mushroom, mushroomsad);
+                        if (wrongmessage == 'i') {
+                            //按键转失败
 
-
-
-                        Snackbar.make(coordinator, "登录失败惹 😭", Snackbar.LENGTH_LONG)
-                                .setAction("忘记密码", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Snackbar.make(coordinator, "忘记了你还连个P🤭", Snackbar.LENGTH_LONG).show();
-                                    }
-                                })
-                                .show();
-                        Log.d(TAG, "登录失败惹");
+                            Snackbar.make(coordinator, "你搞错用户名或者密码啦 😭", Snackbar.LENGTH_LONG)
+                                    .setAction("忘记密码", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Snackbar.make(coordinator, "忘记了你还连个P🤭", Snackbar.LENGTH_LONG).show();
+                                        }
+                                    })
+                                    .show();
+                            Log.d(TAG, "登录密码错误");
+                        }
+                        if (wrongmessage == 'm'){
+                            Snackbar.make(coordinator, "唉，只能登录2个设备\n没法帮你啦 😭", Snackbar.LENGTH_LONG)
+                                    .show();
+                            Log.d(TAG, "登录2个设备");
+                        }
+                        if (wrongmessage == 'N'){
+                            Snackbar.make(coordinator, "连接超时？ 你是不是连错网啦", Snackbar.LENGTH_LONG)
+                                    .setAction("换个网络", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                        }
+                                    })
+                                    .show();
+                            Log.d(TAG, "连接超时");
+                        }
                     }
                 }
             }, 400); // 延时1.5秒
