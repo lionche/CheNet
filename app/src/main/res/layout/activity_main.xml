@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/background">
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -88,8 +89,8 @@
             android:id="@+id/et_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
             android:hint="@string/name_hint"
+            android:background="?attr/background"
             android:inputType="number" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -106,12 +107,11 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_password"
+            android:background="?attr/background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
             android:hint="@string/password_hint"
-            android:inputType="textPassword"
-            android:nextFocusUp="@string/login_title" />
+            android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -143,7 +143,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_gravity="center"
-        app:SpinKit_Color="@color/mushroom"
+        app:SpinKit_Color="?attr/colorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -156,7 +156,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_gravity="center"
-        android:backgroundTint="@color/mushroom"
+        android:backgroundTint="?attr/colorPrimary"
         android:insetLeft="0dp"
         android:insetTop="0dp"
         android:insetRight="0dp"
@@ -179,7 +179,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_gravity="center"
-        android:backgroundTint="@color/mushroom"
+        android:backgroundTint="?attr/colorPrimary"
         android:insetLeft="0dp"
         android:insetTop="0dp"
         android:insetRight="0dp"
@@ -201,7 +201,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_gravity="center"
-        android:backgroundTint="@color/mushroom"
+        android:backgroundTint="?attr/colorPrimary"
         android:insetLeft="0dp"
         android:insetTop="0dp"
         android:insetRight="0dp"
@@ -228,7 +228,6 @@
         android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/mushroom_back"
         tools:layout_editor_absoluteX="34dp"
         tools:layout_editor_absoluteY="0dp" />
 
@@ -251,7 +250,7 @@
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:check_base_color="@color/mushroom"
+        app:check_base_color="?attr/colorPrimary"
         android:layout_gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toEndOf="parent"

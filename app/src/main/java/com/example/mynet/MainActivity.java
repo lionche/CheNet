@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#32F2E1D6"));
+        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#FFFFFF"));
         setContentView(R.layout.activity_main);
         initView();
 

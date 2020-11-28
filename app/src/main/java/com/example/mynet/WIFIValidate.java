@@ -68,7 +68,7 @@ public class WIFIValidate {
         }.start();
     }
 
-    private static boolean NewThreadSendMessage() {
+    private static void NewThreadSendMessage() {
         new Thread() {
             @Override
             public void run() {
@@ -88,7 +88,6 @@ public class WIFIValidate {
                 }
             }
         }.start();
-        return isAvailableByPing;
 
     }
 
