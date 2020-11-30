@@ -1,9 +1,9 @@
-package com.example.mynet;
+package com.example.mynet.javabean;
 
 import lombok.Data;
 
 @Data
-public class PostBean {
+public class LoginPostBean {
     private String ipadr;
     private String macadr;
     private String name;

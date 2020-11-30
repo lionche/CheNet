@@ -1,40 +1,38 @@
 package com.example.mynet;
 
-import android.net.wifi.aware.DiscoverySession;
-import android.os.Message;
 import android.util.Log;
-import android.view.View;
 
-import com.example.mynet.callback.LoginCallBackListener;
-import com.google.android.material.snackbar.Snackbar;
+import com.alibaba.fastjson.JSON;
+import com.example.mynet.javabean.LoginPostBean;
+import com.example.mynet.javabean.LoginResponseBean;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.*;
 
-import static com.example.mynet.MainActivity.coordinator;
 import static com.example.mynet.MainActivity.loginCallBackListener;
 
-public class SendPost {
+public class LoginPostClass {
     static String TAG = "testhttp";
+    public static LoginResponseBean loginResponseBean;
 
-    public static void LoginPost(PostBean postBean) {
-        String namePost = postBean.getName();
-        String passwordPost = postBean.getPassword();
-        String ipPost = postBean.getIpadr();
-        String macPost = postBean.getMacadr();
+    public static void LoginPost(LoginPostBean loginPostBean) {
+        String namePost = loginPostBean.getName();
+        String passwordPost = loginPostBean.getPassword();
+        String ipPost = loginPostBean.getIpadr();
+        String macPost = loginPostBean.getMacadr();
 
         OkHttpClient client = new OkHttpClient().newBuilder()
-                .readTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(2, TimeUnit.SECONDS)
                 .build();
         MediaType mediaType = MediaType.parse("application/json");
 //        RequestBody body = RequestBody.create(mediaType, "{\"deviceType\":\"PC\",\"webAuthUser\":\"202032908\",\"webAuthPassword\":\"09005X\",\"redirectUrl\":\"http://10.16.0.12:8081/?usermac=4C-6F-9C-02-E2-C5&userip=10.21.91.241&origurl=http://edge.microsoft.com/captiveportal/generate_204&nasip=10.100.0.1\",\"type\":\"login\"}");
 
         RequestBody body = RequestBody.create(mediaType, "{\"deviceType\":\"Android\",\"webAuthUser\":\"" + namePost + "\",\"webAuthPassword\":\"" + passwordPost + "\",\"redirectUrl\":\"http://10.16.0.12:8081/?usermac=" + macPost + "&userip=" + ipPost + "&origurl=http://edge.microsoft.com/captiveportal/generate_204&nasip=10.100.0.1\",\"type\":\"login\"}");
-        Log.d(TAG, "{\"deviceType\":\"Android\",\"webAuthUser\":\"" + namePost + "\",\"webAuthPassword\":\"" + passwordPost + "\",\"redirectUrl\":\"http://10.16.0.12:8081/?usermac=" + macPost + "&userip=" + ipPost + "&origurl=http://edge.microsoft.com/captiveportal/generate_204&nasip=10.100.0.1\",\"type\":\"login\"}");
+        Log.d(TAG, "登录信息，{\"deviceType\":\"Android\",\"webAuthUser\":\"" + namePost + "\",\"webAuthPassword\":\"" + passwordPost + "\",\"redirectUrl\":\"http://10.16.0.12:8081/?usermac=" + macPost + "&userip=" + ipPost + "&origurl=http://edge.microsoft.com/captiveportal/generate_204&nasip=10.100.0.1\",\"type\":\"login\"}");
         Request request = new Request.Builder()
-                .url("http://10.16.0.12:8081/portal/api/v2/online?noCache=1605885991204")
+                .url("http://10.16.0.12:8081/portal/api/v2/online")
                 .method("POST", body)
                 .addHeader("accept", "*/*")
                 .addHeader("accept-encoding", "gzip, deflate")
@@ -54,27 +52,33 @@ public class SendPost {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.d(TAG, e.getMessage());
+                Log.d(TAG, "发送错误"+e.getMessage());
+                loginCallBackListener.LoginSendMessage(false, 't');
+
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 String responseData = response.body().string();
                 //返回200为登录正确 400为错误
                 char checkLogin = responseData.toString().charAt(14);
                 char checkwrong = responseData.toString().charAt(90);
-                Log.d(TAG, responseData.toString());
+                Log.d(TAG, "接受信息"+responseData.toString());
 
                 if (checkLogin == '2') {
 
                     loginCallBackListener.LoginSendMessage(true, 's');
-                } else {
+                }
+                else {
                     loginCallBackListener.LoginSendMessage(false, checkwrong);
-
                 }
 
+                loginResponseBean = JSON.parseObject(responseData, LoginResponseBean.class);
+                RequestDevicesClass.RequestDevices();
 
             }
+
+
         });
     }
 

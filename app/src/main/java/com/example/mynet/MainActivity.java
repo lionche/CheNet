@@ -1,49 +1,51 @@
 package com.example.mynet;
 
-import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatEditText;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.BitmapRegionDecoder;
 import android.graphics.Color;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
-import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.SnackbarUtils;
 import com.example.mynet.callback.LoginCallBackListener;
 import com.example.mynet.callback.WIFICallBackListener;
+import com.example.mynet.javabean.DevicesInfoBean;
 import com.githang.statusbar.StatusBarCompat;
 import com.github.chengang.library.TickView;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.google.android.material.snackbar.Snackbar;
 
-import static com.blankj.utilcode.util.KeyboardUtils.clickBlankArea2HideSoftInput;
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.blankj.utilcode.util.NetworkUtils.isAvailableByPing;
+import static com.example.mynet.DeleteDevicesClass.DeleteDevices;
 import static com.example.mynet.LoginClass.getPostBean;
 import static com.example.mynet.LoginClass.login;
 import static com.example.mynet.LoginClass.postBean;
+import static com.example.mynet.RequestDevicesClass.devicesInfoBeanArrayList;
 import static com.example.mynet.WIFIValidate.checkWIFIValidate;
 
 
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     boolean WebValidate;
     static LoginCallBackListener loginCallBackListener;
     static WIFICallBackListener wifiCallBackListener;
+    private AlertDialog.Builder builder;
 
 
     @Override
@@ -139,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         mushroom.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Snackbar.make(coordinator, "恭喜你发现彩蛋啦！    🚗 ❤ 🍄", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(coordinator, "恭喜你发现彩蛋啦！    🚗 ❤ ❤ 🍄", Snackbar.LENGTH_SHORT).show();
                 Log.d(TAG, "onLongClick: 长按蘑菇");
                 return true;
             }
@@ -154,39 +157,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-/*        mushroom.setOnTouchListener(new View.OnTouchListener() {
-            View view2;
-
+        mushroomsad.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                int action = motionEvent.getAction();
-                if (action == MotionEvent.ACTION_DOWN) {
-                    view2 = getButtonVisiable();
-                    Log.d(TAG, "onTouch:  我按的是" + view2);
-                    if ((view2 != progressBar) && (view2 != null)) {
-                        Snackbar.make(coordinator, "恭喜你发现彩蛋啦！ 🚗 ❤ 🍄", Snackbar.LENGTH_SHORT).show();
-                        view2view(view2, progressBar);
-                    } else {
-                        if (view2 == progressBar) {
-                            Log.d(TAG, "onTouch: 我按的是加载");
-                        }
-                    }
-                } else if (action == MotionEvent.ACTION_UP) {
-                    Log.d(TAG, "onTouch:  我抬起是" + view2);
-                    if ((view2 != progressBar) && (view2 != null)) {
-                        view2view(progressBar, view2);
-                    }
-                    if (view2 == progressBar) {
-                        Log.d(TAG, "onTouch: 我按的是加载");
-                    }
-                    if (view2 == null) {
-                        Snackbar.make(coordinator, "严重bug,不会解决了，请重启\n其实这才是真的彩蛋😬", Snackbar.LENGTH_SHORT).show();
-                    }
-                }
-                return true;
+            public void onClick(View view) {
+                Log.d(TAG, "onLongClick: 点击哭蘑菇");
+
             }
-        });*/
+        });
 
 
         btn_success.setOnClickListener(new View.OnClickListener() {
@@ -288,10 +265,10 @@ public class MainActivity extends AppCompatActivity {
         loginCallBackListener = new LoginCallBackListener();
         loginCallBackListener.setmListener(new LoginCallBackListener.Listener() {
             @Override
-            public void SendLoginMessage(Boolean b,char c) {
+            public void SendLoginMessage(Boolean b, char c) {
                 Message message = Message.obtain();
                 Bundle bundle = new Bundle();
-                bundle.putChar("WrongeMessage",c);
+                bundle.putChar("WrongeMessage", c);
                 bundle.putBoolean("LoginCallBack", b);
                 bundle.putString("TYPE", "LoginCallBack");
                 message.setData(bundle);
@@ -331,16 +308,6 @@ public class MainActivity extends AppCompatActivity {
         editor.putBoolean("IFRM", false);
         Log.d(TAG, "我要不记住密码 ");
         editor.apply();
-    }
-
-
-    private void iswebValidate() {
-        new Thread() {
-            @Override
-            public void run() {
-                WebValidate = isAvailableByPing("www.baidu.com");
-            }
-        }.start();
     }
 
 
@@ -538,6 +505,69 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void showDeleteDevicesDialog(List<DevicesInfoBean> devicesInfoBeanArrayList) {
+        final List<Integer> choice = new ArrayList<>();
+        Log.d(TAG, "showDeleteDevicesDialog大小: " + devicesInfoBeanArrayList.size());
+        String[] deviceslistDeviceType = new String[devicesInfoBeanArrayList.size()];
+
+        for (int i = 0; i < devicesInfoBeanArrayList.size(); i++) {
+            deviceslistDeviceType[i] = devicesInfoBeanArrayList.get(i).getDeviceType();
+        }
+
+
+        //默认都未选中
+        boolean[] isSelect = {false, false};
+
+        builder = new AlertDialog.Builder(this).setIcon(R.drawable.mushroomsad)
+                .setTitle("放弃掉一个设备 ")
+                .setMultiChoiceItems(deviceslistDeviceType, isSelect, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+
+                        if (b) {
+                            choice.add(i);
+                        } else {
+                            choice.remove(choice.indexOf(i));
+                        }
+
+
+                    }
+                }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int whitch) {
+                        StringBuilder str = new StringBuilder();
+
+                        for (int i = 0; i < choice.size(); i++) {
+                            Log.d(TAG, "onClick抛弃名字: "+devicesInfoBeanArrayList.get(choice.get(i)).getDeviceType()+"    ");
+                            str.append(devicesInfoBeanArrayList.get(choice.get(i)).getDeviceType()+"    ");
+                            DeleteDevices(devicesInfoBeanArrayList.get(choice.get(i)).getAcct_unique_id());
+                        }
+                        Snackbar.make(coordinator, "你抛弃了" + str, Snackbar.LENGTH_LONG).show();
+                        Log.d(TAG, "onClick: "+"你抛弃了"+str);
+
+                        if(choice.size() != 0){
+                            LegalToLogin();
+                            Log.d(TAG, "onClick: 抛弃完，我再登录");
+                        }else {
+                            Snackbar.make(coordinator, "舍不得孩子连不了网啊" + str, Snackbar.LENGTH_LONG)
+                                    .setAction("再试一次", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            showDeleteDevicesDialog(devicesInfoBeanArrayList);
+                                        }
+                                    })
+                                    .show();
+
+                        }
+
+                        
+
+                    }
+                });
+        builder.create().show();
+    }
+
+
     private void initView() {
         et_name = findViewById(R.id.et_name);
         et_password = findViewById(R.id.et_password);
@@ -579,6 +609,7 @@ public class MainActivity extends AppCompatActivity {
         postBean.setPassword(et_password.getText().toString());
         login();
         view2view(btn_login, progressBar);
+        view2view(btn_fail,progressBar);
     }
 
     private void fail2login(SharedPreferences.Editor editor) {
@@ -588,7 +619,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread() {
             @Override
             public void run() {
-                SendPost.LoginPost(postBean);
+                LoginPostClass.LoginPost(postBean);
             }
         }.start();
 //        new Handler().postDelayed(new Runnable() {
@@ -612,7 +643,7 @@ public class MainActivity extends AppCompatActivity {
                 case "LoginCallBack":
                     char wrongmessage = bundle.getChar("WrongeMessage");
                     Boolean ifLoginSucc = bundle.getBoolean("LoginCallBack");
-                    loginMessageHandler(ifLoginSucc,wrongmessage);
+                    loginMessageHandler(ifLoginSucc, wrongmessage);
                     break;
                 case "WIFICallBack":
                     int ifWIFIValidate = bundle.getInt("WIFICallBack");
@@ -644,20 +675,20 @@ public class MainActivity extends AppCompatActivity {
             switch (ifWIFIValidate) {
                 case 1:
                     Log.d(TAG, "checkWIFIValidate: WIFI都没打开哥");
-                    SnackbarUtils.with(coordinator)
+/*                    SnackbarUtils.with(coordinator)
                             .setMessage("测试")
                             .setMessageColor(Color.BLACK)
                             .setBgResource(R.color.mushroom)
-                            .show();
+                            .show();*/
 
-/*                    Snackbar.make(coordinator, "WIFI都没打开哥 😨", Snackbar.LENGTH_LONG)
+                    Snackbar.make(coordinator, "WIFI都没打开哥 😨", Snackbar.LENGTH_LONG)
                             .setAction("开启WIFI", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                                 }
                             })
-                            .show();*/
+                            .show();
                     view2view(progressBar, btn_wifi);
                     setMushroomFace(mushroom, mushroomsad);
 
@@ -702,7 +733,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        private void loginMessageHandler(Boolean ifLoginSucc,char wrongmessage) {
+        private void loginMessageHandler(Boolean ifLoginSucc, char wrongmessage) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -744,12 +775,14 @@ public class MainActivity extends AppCompatActivity {
                                     .show();
                             Log.d(TAG, "登录密码错误");
                         }
-                        if (wrongmessage == 'm'){
+                        if (wrongmessage == 'm') {
                             Snackbar.make(coordinator, "唉，只能登录2个设备\n没法帮你啦 😭", Snackbar.LENGTH_LONG)
                                     .show();
+                            //弹出删除设备的对话框
+                            showDeleteDevicesDialog(devicesInfoBeanArrayList);
                             Log.d(TAG, "登录2个设备");
                         }
-                        if (wrongmessage == 'N'){
+                        if (wrongmessage == 't') {
                             Snackbar.make(coordinator, "连接超时？ 你是不是连错网啦", Snackbar.LENGTH_LONG)
                                     .setAction("换个网络", new View.OnClickListener() {
                                         @Override
