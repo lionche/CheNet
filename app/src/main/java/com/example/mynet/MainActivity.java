@@ -678,7 +678,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 3:
                     Log.d(TAG, "checkWIFIValidate: 哈哈哈哈哈哈哈哈你其实已经登陆咯");
-                    Snackbar.make(coordinator, "哈哈哈哈哈哈哈哈,\n你其实已经连网咯😙", Snackbar.LENGTH_LONG)
+                    Snackbar.make(coordinator, "哈哈哈哈哈哈哈哈\n你其实已经连网咯😙", Snackbar.LENGTH_LONG)
                             .setAction("再见", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
