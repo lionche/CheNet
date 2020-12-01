@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mushroom;
     private ImageView mushroomsad;
     static ProgressBar progressBar;
-    boolean WebValidate;
     static LoginCallBackListener loginCallBackListener;
     static WIFICallBackListener wifiCallBackListener;
     private AlertDialog.Builder builder;
