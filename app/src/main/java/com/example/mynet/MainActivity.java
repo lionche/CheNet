@@ -517,7 +517,7 @@ public class MainActivity extends AppCompatActivity {
         //默认都未选中
         boolean[] isSelect = {false, false};
 
-        builder = new AlertDialog.Builder(this).setIcon(R.drawable.mushroomsad)
+        builder = new AlertDialog.Builder(this).setIcon(R.drawable.mushroomlogosad)
                 .setTitle("放弃掉一个设备 ")
                 .setMultiChoiceItems(deviceslistDeviceType, isSelect, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
