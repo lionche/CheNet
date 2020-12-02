@@ -44,6 +44,8 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.internal.Internal;
+
 import static com.blankj.utilcode.util.DeviceUtils.getSDKVersionName;
 import static com.blankj.utilcode.util.NetworkUtils.isAvailableByPing;
 import static com.example.mynet.DeleteDevicesClass.DeleteDevices;
@@ -93,23 +95,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
 
-        Log.d(TAG, "onCreate: sdk"+getSDKVersionName());
-         ;
-        UiModeManager uiModeManager = (UiModeManager) this.getSystemService(Context.UI_MODE_SERVICE);
-        int modeType = uiModeManager.getNightMode();
 
-        Log.d(TAG, "onCreate: "+modeType);
-        switch (modeType){
-            case 1:
-            case -100:
-                Log.d(TAG, "onCreate: 白天模式");
-                StatusBarCompat.setStatusBarColor(this, Color.parseColor("#FFFFFF"));
-                break;
-            case 2:
-                Log.d(TAG, "onCreate: 夜间模式");
-                StatusBarCompat.setStatusBarColor(this, Color.parseColor("#FF000000"));
-                break;
-        }
+
+
+
+
+        setSateBarColor();
 
         SharedPreferences sp = getSharedPreferences("mypassword", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -160,16 +151,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-/*
-        mushroom.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                Snackbar.make(coordinator, "恭喜你发现彩蛋啦！    🚗 ❤ ❤ 🍄", Snackbar.LENGTH_SHORT).show();
-                Log.d(TAG, "onLongClick: 长按蘑菇");
-                return true;
-            }
-        });
-*/
 
         mushroom.setOnClickListener(new ClickUtils.OnMultiClickListener(10) {
             @Override
@@ -209,6 +190,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         btn_fail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -219,6 +202,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setSateBarColor() {
+        UiModeManager uiModeManager = (UiModeManager) this.getSystemService(Context.UI_MODE_SERVICE);
+        int modeType = uiModeManager.getNightMode();
+        switch (modeType){
+            case 1:
+                Log.d(TAG, "onCreate: 白天模式");
+                StatusBarCompat.setStatusBarColor(this, Color.parseColor("#FFFFFF"));
+                break;
+            case 2:
+                Log.d(TAG, "onCreate: 夜间模式");
+                StatusBarCompat.setStatusBarColor(this, Color.parseColor("#FF000000"));
+                break;
+        }
     }
 
 
@@ -373,9 +371,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void load2succ() {
-
         //进度条
-
         btn_success.setAlpha(0f);
         btn_success.setVisibility(View.VISIBLE);
 
@@ -394,9 +390,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
         btn_success.setChecked(true);
-
-
     }
+
+
+
 
     public void setMushroomFace(View view1, View view2) {
 
