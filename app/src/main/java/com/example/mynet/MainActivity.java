@@ -3,15 +3,18 @@ package com.example.mynet;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
+import android.app.UiModeManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.ClickUtils;
 import com.blankj.utilcode.util.SnackbarUtils;
 import com.example.mynet.callback.LoginCallBackListener;
 import com.example.mynet.callback.WIFICallBackListener;
@@ -40,6 +44,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.blankj.utilcode.util.DeviceUtils.getSDKVersionName;
 import static com.blankj.utilcode.util.NetworkUtils.isAvailableByPing;
 import static com.example.mynet.DeleteDevicesClass.DeleteDevices;
 import static com.example.mynet.LoginClass.getPostBean;
@@ -85,9 +90,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#FFFFFF"));
         setContentView(R.layout.activity_main);
         initView();
+
+        Log.d(TAG, "onCreate: sdk"+getSDKVersionName());
+         ;
+        UiModeManager uiModeManager = (UiModeManager) this.getSystemService(Context.UI_MODE_SERVICE);
+        int modeType = uiModeManager.getNightMode();
+
+        Log.d(TAG, "onCreate: "+modeType);
+        switch (modeType){
+            case 1:
+            case -100:
+                Log.d(TAG, "onCreate: 白天模式");
+                StatusBarCompat.setStatusBarColor(this, Color.parseColor("#FFFFFF"));
+                break;
+            case 2:
+                Log.d(TAG, "onCreate: 夜间模式");
+                StatusBarCompat.setStatusBarColor(this, Color.parseColor("#FF000000"));
+                break;
+        }
 
         SharedPreferences sp = getSharedPreferences("mypassword", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -138,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+/*
         mushroom.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -146,15 +169,28 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+*/
 
-        mushroom.setOnClickListener(new View.OnClickListener() {
+        mushroom.setOnClickListener(new ClickUtils.OnMultiClickListener(10) {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(coordinator, "没事点我干嘛 😝", Snackbar.LENGTH_SHORT).show();
-                Log.d(TAG, "onLongClick: 点击蘑菇");
+            public void onTriggerClick(View v) {
+                Snackbar.make(coordinator, "恭喜你发现彩蛋啦！    🚗 ❤ ❤ 🍄", Snackbar.LENGTH_SHORT).show();
 
             }
+
+            @Override
+            public void onBeforeTriggerClick(View v, int count) {
+            }
         });
+
+//        mushroom.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(coordinator, "没事点我干嘛 😝", Snackbar.LENGTH_SHORT).show();
+//                Log.d(TAG, "onLongClick: 点击蘑菇");
+//
+//            }
+//        });
 
         mushroomsad.setOnClickListener(new View.OnClickListener() {
             @Override
