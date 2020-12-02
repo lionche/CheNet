@@ -69,7 +69,7 @@
         android:layout_height="70dp"
         android:layout_gravity="center_horizontal"
         android:visibility="gone"
-        android:src="@drawable/mushroomsad"
+        android:src="@drawable/mushroomlogosad"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
