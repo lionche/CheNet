@@ -369,6 +369,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void load2succ() {
+        Log.d(TAG, "load2succ: 按键加载到成功");
         //进度条
         btn_success.setAlpha(0f);
         btn_success.setVisibility(View.VISIBLE);
@@ -755,7 +756,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!saveifau) {
                         load2login();
                         setMushroomFace(mushroom, mushroomsad);
-//                        view2view(mushroom,mushroomsad);
+                        view2view(mushroom,mushroomsad);
                         Log.d(TAG, "checkWIFIValidate: 让我帮你登录叭");
                         Snackbar.make(coordinator, "让我帮你登录叭😃", Snackbar.LENGTH_LONG).show();
                     }
