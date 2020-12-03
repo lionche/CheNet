@@ -35,19 +35,17 @@ import com.blankj.utilcode.util.SnackbarUtils;
 import com.example.mynet.callback.LoginCallBackListener;
 import com.example.mynet.callback.WIFICallBackListener;
 import com.example.mynet.javabean.DevicesInfoBean;
+
 import com.githang.statusbar.StatusBarCompat;
 import com.github.chengang.library.TickView;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.google.android.material.snackbar.Snackbar;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.internal.Internal;
-
-import static com.blankj.utilcode.util.DeviceUtils.getSDKVersionName;
-import static com.blankj.utilcode.util.NetworkUtils.isAvailableByPing;
 import static com.example.mynet.DeleteDevicesClass.DeleteDevices;
 import static com.example.mynet.LoginClass.getPostBean;
 import static com.example.mynet.LoginClass.login;
@@ -94,8 +92,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-
-
 
 
 
@@ -324,6 +320,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 
     private void RemPassword(SharedPreferences.Editor editor) {

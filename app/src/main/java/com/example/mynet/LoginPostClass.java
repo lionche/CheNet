@@ -27,7 +27,6 @@ public class LoginPostClass {
                 .readTimeout(2, TimeUnit.SECONDS)
                 .build();
         MediaType mediaType = MediaType.parse("application/json");
-//        RequestBody body = RequestBody.create(mediaType, "{\"deviceType\":\"PC\",\"webAuthUser\":\"202032908\",\"webAuthPassword\":\"09005X\",\"redirectUrl\":\"http://10.16.0.12:8081/?usermac=4C-6F-9C-02-E2-C5&userip=10.21.91.241&origurl=http://edge.microsoft.com/captiveportal/generate_204&nasip=10.100.0.1\",\"type\":\"login\"}");
 
         RequestBody body = RequestBody.create(mediaType, "{\"deviceType\":\"Android\",\"webAuthUser\":\"" + namePost + "\",\"webAuthPassword\":\"" + passwordPost + "\",\"redirectUrl\":\"http://10.16.0.12:8081/?usermac=" + macPost + "&userip=" + ipPost + "&origurl=http://edge.microsoft.com/captiveportal/generate_204&nasip=10.100.0.1\",\"type\":\"login\"}");
         Log.d(TAG, "登录信息，{\"deviceType\":\"Android\",\"webAuthUser\":\"" + namePost + "\",\"webAuthPassword\":\"" + passwordPost + "\",\"redirectUrl\":\"http://10.16.0.12:8081/?usermac=" + macPost + "&userip=" + ipPost + "&origurl=http://edge.microsoft.com/captiveportal/generate_204&nasip=10.100.0.1\",\"type\":\"login\"}");
