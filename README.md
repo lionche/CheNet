@@ -15,7 +15,7 @@
 
 
 
-<img src="README.assets/login.jpg" alt="login" style="zoom: 25%;" /> <img src="README.assets/loginsucc.jpg" alt="loginsucc" style="zoom:25%;" /><img src="README.assets/wrongepassword.jpg" alt="wrongepassword" style="zoom:25%;" />
+<img src="README.assets/login.jpg" alt="login" style="zoom: 25%;" /> <img src="README.assets/loginsucc.jpg" alt="loginsucc" style="zoom:25%;" /><img src="README.assets/wrongepassword.jpg" alt="wrongepassword" style="zoom5%;" />
 
 
 
