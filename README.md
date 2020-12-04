@@ -53,7 +53,7 @@
 
 
 
-​                                                                          <img src="README.assets/mm_facetoface_collect_qrcode_1607045998317.png" alt="mm_facetoface_collect_qrcode_1607045998317" style="zoom:25%;" />                             
+​                                                                          <img src="README.assets/mm_facetoface_collect_qrcode_1607045998317.png" alt="mm_facetoface_collect_qrcode_1607045998317" style="zoom:100%;" />                             
 
 ​                                  
 
