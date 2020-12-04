@@ -18,6 +18,10 @@
 
 
 
+**下载地址**：[Releases · lionche/CheNet (github.com)](https://github.com/lionche/CheNet/releases/)
+
+
+
 注意本软件仅支持**NWU-STUDENT**，不支持NWUNET ! ! !
 
 注意本软件仅支持**NWU-STUDENT**，不支持NWUNET ! ! !
