@@ -1,7 +1,7 @@
-# CheNet
-西北大学校园网登录助手
+# 项目介绍
 
-## 项目介绍
+
+蘑菇助手
 
 项目地址：https://github.com/lionche/CheNet
 
@@ -15,7 +15,7 @@
 
 
 
-<img src="README.assets/login.jpg" alt="login" style="zoom:100%;" /> ![wrongepassword](README.assets/wrongepassword.jpg)<img src="README.assets/loginsucc.jpg" alt="loginsucc" style="zoom:100%;" /><img src="README.assets/wrongepassword.jpg" alt="wrongepassword" style="zoom:100%;" />
+<img src="README.assets/login.jpg" alt="login" style="zoom:50%;" /> ![wrongepassword](README.assets/wrongepassword.jpg)<img src="README.assets/loginsucc.jpg" alt="loginsucc" style="zoom:100%;" /><img src="README.assets/wrongepassword.jpg" alt="wrongepassword" style="zoom:100%;" />
 
 
 
