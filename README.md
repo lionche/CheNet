@@ -1,7 +1,6 @@
-# 项目介绍
+# 蘑菇助手
 
-
-蘑菇助手
+## 项目介绍
 
 项目地址：https://github.com/lionche/CheNet
 
@@ -23,7 +22,7 @@
 
 
 
-# 构建
+## 构建
 
 - Android Studio 4.1.1
 
@@ -53,7 +52,7 @@
 
 
 
-​                                                                          <img src="README.assets/mm_facetoface_collect_qrcode_1607045998317.png" alt="mm_facetoface_collect_qrcode_1607045998317" style="zoom:100%;" />                             
+​                                                                          <img src="README.assets/mm_facetoface_collect_qrcode_1607045998317.png" alt="mm_facetoface_collect_qrcode_1607045998317" style="zoom:50%;" />                             
 
 ​                                  
 
