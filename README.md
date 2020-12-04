@@ -15,7 +15,7 @@
 
 
 
-<img src="README.assets/login.jpg" alt="login" style="zoom:25%;" /> <img src="README.assets/loginsucc.jpg" alt="loginsucc" style="zoom:5%;" /><img src="README.assets/wrongepassword.jpg" alt="wrongepassword" style="zoom:5%;" />
+<img src="README.assets/login.jpg" alt="login" style="zoom:100%;" /> ![wrongepassword](README.assets/wrongepassword.jpg)<img src="README.assets/loginsucc.jpg" alt="loginsucc" style="zoom:100%;" /><img src="README.assets/wrongepassword.jpg" alt="wrongepassword" style="zoom:100%;" />
 
 
 
