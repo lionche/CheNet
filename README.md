@@ -4,17 +4,29 @@
 
 项目地址：https://github.com/lionche/CheNet
 
+
+
 西北大学校园网（NWU-STUDENT）登录软件。浏览器登录的方式效率太低且体验不佳，通过网络抓包了解了登录的原理后，通过安卓OKHTTP来发送登录请求，达到相同的效果。
 
-注意仅支持NWU-STUDENT，不支持NWUNET ! ! !
 
-注意仅支持NWU-STUDENT，不支持NWUNET ! ! !
 
-注意仅支持NWU-STUDENT，不支持NWUNET ! ! !
+功能：支持记住密码，自动登录，超过2个设备后提示选择设备下线，基本可以做到完整的校园网登录功能。
 
 
 
+**如果喜欢的话，可以STAR支持我！**
 
+
+
+注意本软件仅支持**NWU-STUDENT**，不支持NWUNET ! ! !
+
+注意本软件仅支持**NWU-STUDENT**，不支持NWUNET ! ! !
+
+注意本软件仅支持**NWU-STUDENT**，不支持NWUNET ! ! !
+
+
+
+## 使用截图
 
 ![login](README.assets/login.jpg)                            ![loginsucc](README.assets/loginsucc.jpg)                          ![wrongepassword](README.assets/wrongepassword.jpg)   
 
