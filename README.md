@@ -14,11 +14,9 @@
 
 
 
-<img src="README.assets/login.jpg" alt="login" style="zoom:50%;" /> ![wrongepassword](README.assets/wrongepassword.jpg)<img src="README.assets/loginsucc.jpg" alt="loginsucc" style="zoom:100%;" /><img src="README.assets/wrongepassword.jpg" alt="wrongepassword" style="zoom:100%;" />
 
 
-
-
+![login](README.assets/login.jpg)                            ![loginsucc](README.assets/loginsucc.jpg)                          ![wrongepassword](README.assets/wrongepassword.jpg)   
 
 
 
