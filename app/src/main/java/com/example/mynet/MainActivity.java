@@ -82,14 +82,22 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onResume() {
+        super.onResume();
         Log.d(TAG, "onRestart: 我回来了，再次检测网络");
-        wifiCallBackListener.WifiSendMessage(5);
-
+//        wifiCallBackListener.WifiSendMessage(5);
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        WifiChangeBroadcastReceiver br = new WifiChangeBroadcastReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        this.registerReceiver(br, filter);
+    }
 
     static Boolean saveifau;
 
@@ -119,13 +127,7 @@ public class MainActivity extends AppCompatActivity {
         //检测wifi状况，顺便检测是否自动登陆
         checkWIFIValidate();
 
-        WifiChangeBroadcastReceiver br = new WifiChangeBroadcastReceiver();
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-
-        this.registerReceiver(br, filter);
 
 
 
@@ -296,19 +298,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void toLogin() {
-                //获取WiFi和MAC
-                getPostBean();
-
-                if (cb_au_login.isChecked()) {
-                    Log.d(TAG, "toLogin: 发送消息给HANDLER自动登陆");
-                    Message message = Message.obtain();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("ButtonCallBack", "AutoLogin");
-                    bundle.putString("TYPE", "ButtonCallBack");
-                    message.setData(bundle);
-                    handler.sendMessage(message);
-                }
-
+                wifiCallBackListener.WifiSendMessage(6);
             }
         });
     }
@@ -712,18 +702,18 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, 800); // 延时1.5秒
                     break;
-                case "ButtonCallBack":
-                    String ButtonChange = bundle.getString("ButtonCallBack");
-                    switch (ButtonChange) {
-                        case "AutoLogin":
-                            //自动登陆
-                            Log.d(TAG, "handleMessage: 我收到消息要自动登陆");
-                            Snackbar.make(coordinator, "偷偷帮你自动登陆啦！ 🤫 ", Snackbar.LENGTH_LONG).show();
-                            postBean.setName(et_name.getText().toString());
-                            postBean.setPassword(et_password.getText().toString());
-                            login();
-                            break;
-                    }
+//                case "ButtonCallBack":
+//                    String ButtonChange = bundle.getString("ButtonCallBack");
+//                    switch (ButtonChange) {
+//                        case "AutoLogin":
+//                            //自动登陆
+//                            Log.d(TAG, "handleMessage: 我收到消息要自动登陆");
+//                            Snackbar.make(coordinator, "偷偷帮你自动登陆啦！ 🤫 ", Snackbar.LENGTH_LONG).show();
+//                            postBean.setName(et_name.getText().toString());
+//                            postBean.setPassword(et_password.getText().toString());
+//                            login();
+//                            break;
+//                    }
             }
             return false;
         }
@@ -794,11 +784,15 @@ public class MainActivity extends AppCompatActivity {
                 case 6:
                     Log.d(TAG, "checkWIFIValidate: 连接校园网，检测网络");
                     if (cb_au_login.isChecked()){
+                        Log.d(TAG, "handleMessage: 我收到消息要自动登陆");
+                        Snackbar.make(coordinator, "偷偷帮你自动登陆啦！ 🤫 ", Snackbar.LENGTH_LONG).show();
                         getPostBean();
                         postBean.setName(et_name.getText().toString());
                         postBean.setPassword(et_password.getText().toString());
                         login();
                         Log.d(TAG, "WIFIMessageHandler: 校园网自动登录中");
+                        View view = getButtonVisiable();
+                        view2view(view, progressBar);
                     }
 //                    Toast.makeText(MainActivity.this, "校园网自动登录中", Toast.LENGTH_SHORT).show();
                     break;
@@ -812,6 +806,7 @@ public class MainActivity extends AppCompatActivity {
                     if (ifLoginSucc) {
                         // 按键转成功
                         load2succ();
+
                         setMushroomFace(mushroomsad, mushroom);
 
                         Snackbar.make(coordinator, "登录成功啦 😚", Snackbar.LENGTH_LONG)

@@ -1,11 +1,13 @@
 package com.example.mynet;
 
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -49,13 +51,18 @@ public class WIFIValidate {
                 Log.d(TAG, "checkWIFIValidate: 检测wifi练没练");
                 wifiCallBackListener.WifiSendMessage(2);
             }else{
-                NewThreadToPing();
 
-                NewThreadSendMessage();
+                PingBidu();
+
             }
 
         }
 
+    }
+
+    public static void PingBidu() {
+        NewThreadToPing();
+        NewThreadSendMessage();
     }
 
     private static void NewThreadToPing() {
@@ -72,6 +79,8 @@ public class WIFIValidate {
         new Thread() {
             @Override
             public void run() {
+                String wifiname = ConnectivityManager.EXTRA_EXTRA_INFO;
+                Log.d(TAG, "run: wifi为 "+wifiname);
                 try {
                     Thread.sleep(500);
                     Log.d(TAG, "checkWIFIValidate我等了1S: " + isAvailableByPing);
