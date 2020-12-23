@@ -92,11 +92,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        WifiChangeBroadcastReceiver br = new WifiChangeBroadcastReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        this.registerReceiver(br, filter);
+
     }
 
     static Boolean saveifau;
@@ -107,6 +103,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+
+        WifiChangeBroadcastReceiver br = new WifiChangeBroadcastReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        this.registerReceiver(br, filter);
 
 
 
@@ -125,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //检测wifi状况，顺便检测是否自动登陆
-        checkWIFIValidate();
+//        checkWIFIValidate();
 
 
 
@@ -296,10 +298,6 @@ public class MainActivity extends AppCompatActivity {
                 handler.sendMessage(message);
             }
 
-            @Override
-            public void toLogin() {
-                wifiCallBackListener.WifiSendMessage(6);
-            }
         });
     }
 
@@ -766,7 +764,6 @@ public class MainActivity extends AppCompatActivity {
                             .show();
                     setMushroomFace(mushroomsad, mushroom);
                     load2succ();
-
                     break;
                 case 4:
                     if (!saveifau) {
@@ -775,6 +772,13 @@ public class MainActivity extends AppCompatActivity {
                         view2view(mushroom,mushroomsad);
                         Log.d(TAG, "checkWIFIValidate: 让我帮你登录叭");
                         Snackbar.make(coordinator, "让我帮你登录叭😃", Snackbar.LENGTH_LONG).show();
+                    }
+                    else {
+                        Log.d(TAG, "handleMessage: 我收到消息要自动登陆");
+//                        Snackbar.make(coordinator, "偷偷帮你自动登陆啦！ 🤫 ", Snackbar.LENGTH_LONG).show();
+                        postBean.setName(et_name.getText().toString());
+                        postBean.setPassword(et_password.getText().toString());
+                        login();
                     }
                     break;
                 case 5:
@@ -786,7 +790,6 @@ public class MainActivity extends AppCompatActivity {
                     if (cb_au_login.isChecked()){
                         Log.d(TAG, "handleMessage: 我收到消息要自动登陆");
                         Snackbar.make(coordinator, "偷偷帮你自动登陆啦！ 🤫 ", Snackbar.LENGTH_LONG).show();
-                        getPostBean();
                         postBean.setName(et_name.getText().toString());
                         postBean.setPassword(et_password.getText().toString());
                         login();
@@ -795,6 +798,23 @@ public class MainActivity extends AppCompatActivity {
                         view2view(view, progressBar);
                     }
 //                    Toast.makeText(MainActivity.this, "校园网自动登录中", Toast.LENGTH_SHORT).show();
+                    break;
+                case 7:
+                    Log.d(TAG, "checkWIFIValidate: 目前只能支持NWU-STUDENT");
+                    Snackbar.make(coordinator, "目前只能支持NWU-STUDENT ", Snackbar.LENGTH_LONG)
+                            .setAction("更换网络", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                }
+                            })
+                            .show();
+                    setMushroomFace(mushroom, mushroomsad);
+                    view2view(progressBar, btn_wifi);
+                    break;
+                case 8:
+                    Log.d(TAG, "checkWIFIValidate: 检测网络");
+                    checkWIFIValidate();
                     break;
             }
         }

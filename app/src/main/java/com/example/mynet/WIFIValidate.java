@@ -1,6 +1,9 @@
 package com.example.mynet;
 
+import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -51,7 +54,7 @@ public class WIFIValidate {
                 Log.d(TAG, "checkWIFIValidate: 检测wifi练没练");
                 wifiCallBackListener.WifiSendMessage(2);
             }else{
-
+                getPostBean();
                 PingBidu();
 
             }
@@ -75,12 +78,11 @@ public class WIFIValidate {
         }.start();
     }
 
+
     private static void NewThreadSendMessage() {
         new Thread() {
             @Override
             public void run() {
-                String wifiname = ConnectivityManager.EXTRA_EXTRA_INFO;
-                Log.d(TAG, "run: wifi为 "+wifiname);
                 try {
                     Thread.sleep(500);
                     Log.d(TAG, "checkWIFIValidate我等了1S: " + isAvailableByPing);
@@ -88,9 +90,16 @@ public class WIFIValidate {
                         Log.d(TAG, "checkWIFIValidate: 我ping通百度");
                         wifiCallBackListener.WifiSendMessage(3);
                     }else {
+                        Log.d(TAG, "run: wifi是否为校园网 "+WifiChangeBroadcastReceiver.isNWU_Student);
                         Log.d(TAG, "checkWIFIValidate: 我ping不通百度");
-                        wifiCallBackListener.WifiSendMessage(4);
-                        wifiCallBackListener.ReadyToLogin();
+                        if(WifiChangeBroadcastReceiver.isNWU_Student){
+                            wifiCallBackListener.WifiSendMessage(4);
+                        }else {
+                            wifiCallBackListener.WifiSendMessage(7);
+
+                        }
+
+
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();

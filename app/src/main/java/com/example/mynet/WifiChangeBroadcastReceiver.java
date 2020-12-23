@@ -17,6 +17,8 @@ import static com.example.mynet.MainActivity.wifiCallBackListener;
 import static com.example.mynet.WIFIValidate.checkWIFIValidate;
 
 public class WifiChangeBroadcastReceiver extends BroadcastReceiver {
+
+    public static boolean isNWU_Student = false;
     @Override
     public void onReceive(Context context, Intent intent) {
         StringBuilder sb = new StringBuilder();
@@ -24,18 +26,19 @@ public class WifiChangeBroadcastReceiver extends BroadcastReceiver {
         sb.append("URI: " + intent.toUri(Intent.URI_INTENT_SCHEME).toString() + "\n");
         String log = sb.toString();
         Log.d("testhttp", "onReceive: 我收到wifi切换广播 "+log);
-        Log.d("testhttp", "onReceive: "+intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY,false) + " "+intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO)+" "+intent.getStringExtra(ConnectivityManager.EXTRA_NETWORK));
+        Log.d("testhttp", "onReceive: "+intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO));
 
         String wifiname = intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO);
-        Log.d("testhttp", "现在wifi为: "+wifiname);
 
+        wifiCallBackListener.WifiSendMessage(8);
 
         if(wifiname != null){
             Log.d("testhttp", "onReceive: "+wifiname);
-            Log.d("testhttp", "校园网: "+"NWU-STUDENT");
-            if (wifiname.equals("\"NWU-STUDENT\"")){
+//            if (wifiname.contains("\"NWU-STUDENT\"")){
+            if (wifiname.contains("XKIMG")){
                 Log.d("testhttp", "onReceive: 你链接了student-net");
-                wifiCallBackListener.WifiSendMessage(6);
+                isNWU_Student = true;
+//                wifiCallBackListener.WifiSendMessage(6);
             }
         }
 
@@ -45,6 +48,8 @@ public class WifiChangeBroadcastReceiver extends BroadcastReceiver {
                 Log.d("testhttp", "onReceive: :关闭 "+wifistate);
                 wifiCallBackListener.WifiSendMessage(5);
                 break;
+            case 3:
+
         }
     }
 }

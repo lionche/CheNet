@@ -8,7 +8,6 @@ public class WIFICallBackListener {
 
         //SnackBar给提示
         void SendWIFIMessage(int caseid);
-        void toLogin();
 
     }
 
@@ -25,12 +24,7 @@ public class WIFICallBackListener {
         }
     }
 
-    //WIFI打开连接WIFI但没登录
-        public void ReadyToLogin(){
-        if (mListener != null){
-            mListener.toLogin();
-        }
-    }
+
 
 
 }
