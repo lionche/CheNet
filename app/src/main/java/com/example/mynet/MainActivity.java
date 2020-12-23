@@ -13,9 +13,12 @@ import android.app.UiModeManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -43,9 +46,13 @@ import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.google.android.material.snackbar.Snackbar;
 
 
+
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.blankj.utilcode.util.NetworkUtils.getGatewayByWifi;
+import static com.blankj.utilcode.util.NetworkUtils.getIpAddressByWifi;
+import static com.blankj.utilcode.util.NetworkUtils.getServerAddressByWifi;
 import static com.example.mynet.DeleteDevicesClass.DeleteDevices;
 import static com.example.mynet.LoginClass.getPostBean;
 import static com.example.mynet.LoginClass.login;
@@ -78,9 +85,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         Log.d(TAG, "onRestart: 我回来了，再次检测网络");
-        View view = getButtonVisiable();
-        view2view(view, progressBar);
-        NewThreadCheckWIFI();
+        wifiCallBackListener.WifiSendMessage(5);
+
+
     }
 
 
@@ -106,9 +113,20 @@ public class MainActivity extends AppCompatActivity {
         WIFICallBack();
 
         LoginCallBack(editor);
+        Log.d("testhttp", "getPostBean: "+getIpAddressByWifi());
+
 
         //检测wifi状况，顺便检测是否自动登陆
         checkWIFIValidate();
+
+        WifiChangeBroadcastReceiver br = new WifiChangeBroadcastReceiver();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+
+        this.registerReceiver(br, filter);
+
 
 
         cb_rm_password.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -200,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     private void setSateBarColor() {
         UiModeManager uiModeManager = (UiModeManager) this.getSystemService(Context.UI_MODE_SERVICE);
         int modeType = uiModeManager.getNightMode();
@@ -215,8 +234,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private static void checkNet(){
+        View view = getButtonVisiable();
+        view2view(view, progressBar);
+        NewThreadCheckWIFI();
+    }
 
-    private View getButtonVisiable() {
+
+    private static View getButtonVisiable() {
         View view = null;
         if (btn_success.getVisibility() == View.VISIBLE)
             view = btn_success;
@@ -346,7 +371,8 @@ public class MainActivity extends AppCompatActivity {
     static int longAnimationDuration = 300;
 
 
-    public void view2view(View view1, View view2) {
+    public static void view2view(View view1, View view2) {
+        Log.d(TAG, "view2view: 动画加载");
         //进度条
 
         view2.setAlpha(0f);
@@ -760,6 +786,21 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "checkWIFIValidate: 让我帮你登录叭");
                         Snackbar.make(coordinator, "让我帮你登录叭😃", Snackbar.LENGTH_LONG).show();
                     }
+                    break;
+                case 5:
+                    Log.d(TAG, "checkWIFIValidate: 再次检测网络");
+                    checkNet();
+                    break;
+                case 6:
+                    Log.d(TAG, "checkWIFIValidate: 连接校园网，检测网络");
+                    if (cb_au_login.isChecked()){
+                        getPostBean();
+                        postBean.setName(et_name.getText().toString());
+                        postBean.setPassword(et_password.getText().toString());
+                        login();
+                        Log.d(TAG, "WIFIMessageHandler: 校园网自动登录中");
+                    }
+//                    Toast.makeText(MainActivity.this, "校园网自动登录中", Toast.LENGTH_SHORT).show();
                     break;
             }
         }

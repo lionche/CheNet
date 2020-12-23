@@ -1,5 +1,6 @@
 package com.example.mynet;
 
+import android.util.Log;
 import android.widget.EditText;
 
 import com.example.mynet.javabean.LoginPostBean;
