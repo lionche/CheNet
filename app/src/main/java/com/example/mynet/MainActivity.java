@@ -81,13 +81,13 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog.Builder builder;
 
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        Log.d(TAG, "onRestart: 我回来了，再次检测网络");
-////        wifiCallBackListener.WifiSendMessage(5);
-//
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onRestart: 我回来了，再次检测网络");
+        wifiCallBackListener.WifiSendMessage(5);
+
+    }
 
 //    @Override
 //    protected void onStop() {
@@ -769,7 +769,7 @@ public class MainActivity extends AppCompatActivity {
                     load2succ();
                     break;
                 case 4:
-                    if (!saveifau) {
+                    if (!cb_au_login.isChecked()) {
                         load2login();
                         setMushroomFace(mushroom, mushroomsad);
                         view2view(mushroom,mushroomsad);
