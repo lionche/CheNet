@@ -81,19 +81,19 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog.Builder builder;
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onRestart: 我回来了，再次检测网络");
-//        wifiCallBackListener.WifiSendMessage(5);
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        Log.d(TAG, "onRestart: 我回来了，再次检测网络");
+////        wifiCallBackListener.WifiSendMessage(5);
+//
+//    }
 
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-    }
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//
+//    }
 
     static Boolean saveifau;
 
@@ -106,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
 
         WifiChangeBroadcastReceiver br = new WifiChangeBroadcastReceiver();
         IntentFilter filter = new IntentFilter();
-        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         this.registerReceiver(br, filter);
 
 
@@ -239,8 +239,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static void checkNet(){
+
         View view = getButtonVisiable();
-        view2view(view, progressBar);
+        if (view != null){
+            view.setVisibility(View.GONE);
+            view2view(view, progressBar);
+        }
         NewThreadCheckWIFI();
     }
 
@@ -253,8 +257,7 @@ public class MainActivity extends AppCompatActivity {
             view = btn_login;
         if (btn_fail.getVisibility() == View.VISIBLE)
             view = btn_fail;
-        if (progressBar.getVisibility() == View.VISIBLE)
-            view = progressBar;
+
         if (btn_wifi.getVisibility() == View.VISIBLE)
             view = btn_wifi;
         return view;
@@ -782,7 +785,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 case 5:
-                    Log.d(TAG, "checkWIFIValidate: 再次检测网络");
+                    Log.d(TAG, "checkWIFIValidate: 检测网络");
                     checkNet();
                     break;
                 case 6:

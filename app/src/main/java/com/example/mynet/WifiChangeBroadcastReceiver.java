@@ -25,31 +25,43 @@ public class WifiChangeBroadcastReceiver extends BroadcastReceiver {
         sb.append("Action: " + intent.getAction() + "\n");
         sb.append("URI: " + intent.toUri(Intent.URI_INTENT_SCHEME).toString() + "\n");
         String log = sb.toString();
-        Log.d("testhttp", "onReceive: 我收到wifi切换广播 "+log);
-        Log.d("testhttp", "onReceive: "+intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO));
+
+
+
 
         String wifiname = intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO);
 
-        wifiCallBackListener.WifiSendMessage(8);
+        int nettype =  intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE,100);
 
-        if(wifiname != null){
+        Boolean ifconnect = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY,false);
+
+        int wifistate = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN);
+
+
+
+//        Log.d("testhttp", "onReceive: "+nettype +" "+ifconnect +" "+wifistate);
+
+
+
+        if(nettype == 1 && !ifconnect && wifistate == 4){
+
+            Log.d("testhttp", "onReceive: 我收到wifi切换广播：打开 ");
+            wifiCallBackListener.WifiSendMessage(5);
+
+
+//            wifiCallBackListener.WifiSendMessage(8);
+
             Log.d("testhttp", "onReceive: "+wifiname);
-//            if (wifiname.contains("\"NWU-STUDENT\"")){
-            if (wifiname.contains("XKIMG")){
+            if (wifiname.contains("STUDENT")){
                 Log.d("testhttp", "onReceive: 你链接了student-net");
                 isNWU_Student = true;
 //                wifiCallBackListener.WifiSendMessage(6);
             }
-        }
-
-        int wifistate = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN);
-        switch (wifistate){
-            case 1:
-                Log.d("testhttp", "onReceive: :关闭 "+wifistate);
-                wifiCallBackListener.WifiSendMessage(5);
-                break;
-            case 3:
+        }else if(nettype == 100 && !ifconnect && (wifistate == 1)){
+            Log.d("testhttp", "onReceive: 我收到wifi切换广播：关闭 ");
+            wifiCallBackListener.WifiSendMessage(5);
 
         }
+
     }
 }
