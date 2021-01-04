@@ -13,16 +13,12 @@ public class LoginClass {
     private EditText et_password;
     public static LoginPostBean postBean;
 
-
     public static void getPostBean(){
         postBean = new LoginPostBean();
         postBean.setMacadr(getMacAddress());
         postBean.setIpadr(getIpAddressByWifi());
-
-
     }
     public static void login(){
         LoginPostClass.LoginPost(postBean);
     }
-
 }
