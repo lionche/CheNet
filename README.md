@@ -1,4 +1,5 @@
 # 蘑菇助手
+## 已经停止维护，新版项目地址：https://github.com/lionche/NWU_Helper
 
 ## 项目介绍
 
